@@ -5,7 +5,7 @@ on:
     - cron: '*/20 * * * *'   # toutes les 20 minutes
   workflow_dispatch:          # bouton « Run workflow »
   push:
-    paths: ['scripts/fetch-feeds.mjs', '.github/workflows/news.yml']
+    paths: ['scripts/fetch-feeds.mjs', '.github/workflows/news.yml', 'sources.json']
 
 permissions:
   contents: write
