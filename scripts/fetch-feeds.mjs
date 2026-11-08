@@ -23,6 +23,14 @@ for (const [, sym] of ctx.MARKETS) {
   if (id) urls.add('https://stooq.com/q/l/?s=' + encodeURIComponent(id) + '&f=sd2t2ohlc&h&e=csv');
 }
 
+// Sources ajoutées par l'utilisateur et enregistrées dans sources.json
+if (fs.existsSync('sources.json')) {
+  try {
+    for (const s of JSON.parse(fs.readFileSync('sources.json', 'utf8')))
+      if (s && /^https?:\/\//.test(s.url)) urls.add(s.url);
+  } catch (e) { console.log('sources.json illisible :', e.message); }
+}
+
 // Garde les 25 premiers articles (comme la page) pour limiter la taille
 function trim(x) {
   if (!x.trimStart().startsWith('<')) return x;
