@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "name": "Google News",
+    "url": "https://news.google.com/home?hl=fr&gl=FR&ceid=FR:fr",
+    "cat": "world",
+    "lang": "en"
+  },
+  {
+    "name": "A Bola",
+    "url": "http://www.abola.pt",
+    "cat": "fp",
+    "lang": "pt"
+  },
+  {
+    "name": "Lyon Actu",
+    "url": "https://actu.fr/lyon/",
+    "cat": "france",
+    "lang": "fr"
+  }
+]
