@@ -141,6 +141,8 @@ dialog .btn.primary{border-color:var(--acc);color:var(--acc-ink)}
 .mylist span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mylist button{background:none;border:0;color:var(--acc);font-weight:600;font-size:12px}
 .mylist .ttl{border:0;font:700 11px var(--sans);letter-spacing:.14em;color:var(--mute);text-transform:uppercase}
+.hint{margin:6px 0 8px;font-size:12px;color:var(--mute);line-height:1.45}
+#s-json{width:100%;margin-top:8px;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:11.5px/1.4 var(--mono);resize:vertical}
 .err{color:var(--down);font-size:12.5px;margin-top:8px;min-height:1em}
 
 @media(max-width:760px){
@@ -204,6 +206,11 @@ dialog .btn.primary{border-color:var(--acc);color:var(--acc-ink)}
     <div class="err" id="s-err"></div>
   </div>
   <div class="mylist" id="s-list"></div>
+  <div class="mylist" style="padding-top:2px">
+    <p class="hint" data-i="shareHint"></p>
+    <button class="btn" id="s-copy" data-i="copy"></button>
+    <textarea id="s-json" rows="6" readonly hidden spellcheck="false"></textarea>
+  </div>
   <div class="dlg-f" style="margin-top:0"><button class="btn" id="s-cancel" data-i="close"></button><button class="btn primary" id="s-ok" data-i="addBtn"></button></div>
 </dialog>
 
@@ -213,7 +220,7 @@ const LANGS = {en:'English', fr:'Français', pt:'Português', es:'Español'};
 const LOCALE = {en:'en-GB', fr:'fr-FR', pt:'pt-PT', es:'es-ES'};
 const CAT_IDS = ['world','france','portugal','eco','fe','ff','fp'];
 const I18N = {
-  en:{tag:'World edition',autoScroll:'Auto-scroll',refresh:'Refresh',add:'Add a source',
+  en:{copy:'Copy sources for the site',copied:'Copied ✓',shareHint:'Added sources are saved in this browser. To keep them on the site (all devices), copy them and paste into sources.json on GitHub.',tag:'World edition',autoScroll:'Auto-scroll',refresh:'Refresh',add:'Add a source',
     srcTitle:'Sources',srcSub:'Meridian News aggregates public RSS feeds. Headlines and summaries belong to their publishers; each article links to the original site.',
     quotes:'Market data:',gnote:'Some sections use',auto:'Auto-refresh every 10 min',lastUpd:'Last update',
     dlgTitle:'Add a source',dlgSub:'Paste the address of an RSS or Atom feed.',fName:'Name',fUrl:'Feed URL',fCat:'Section',fLang:'Language',close:'Close',addBtn:'Add',mine:'My sources',remove:'Remove',
@@ -222,7 +229,7 @@ const I18N = {
     dOk:'Feed active',dKo:'Feed unreachable',dNo:'Not loaded',grp:'Football',
     cats:[['World','International news'],['France','News from France'],['Portugal','News from Portugal'],['Economy','Economy & markets'],['Europe','European football'],['France','French football'],['Portugal','Portuguese football']],
     mkn:{gold:'Gold',silver:'Silver',gas:'Natural gas'}},
-  fr:{tag:'Édition mondiale',autoScroll:'Défilement auto',refresh:'Actualiser',add:'Ajouter une source',
+  fr:{copy:'Copier les sources pour le site',copied:'Copié ✓',shareHint:"Les sources ajoutées sont gardées dans ce navigateur. Pour les enregistrer sur le site (tous vos appareils), copiez-les puis collez-les dans sources.json sur GitHub.",tag:'Édition mondiale',autoScroll:'Défilement auto',refresh:'Actualiser',add:'Ajouter une source',
     srcTitle:'Sources',srcSub:"Meridian News agrège des flux RSS publics. Les titres et résumés appartiennent à leurs éditeurs ; chaque article renvoie vers le site d'origine.",
     quotes:'Cours :',gnote:'Certaines rubriques utilisent',auto:'Actualisation automatique toutes les 10 min',lastUpd:'Dernière mise à jour',
     dlgTitle:'Ajouter une source',dlgSub:"Collez l'adresse d'un flux RSS ou Atom.",fName:'Nom',fUrl:'URL du flux',fCat:'Rubrique',fLang:'Langue',close:'Fermer',addBtn:'Ajouter',mine:'Mes sources',remove:'Retirer',
@@ -231,7 +238,7 @@ const I18N = {
     dOk:'Flux actif',dKo:'Flux inaccessible',dNo:'Non chargé',grp:'Football',
     cats:[['Monde','Actualité internationale'],['France','Actualité en France'],['Portugal','Actualité au Portugal'],['Économie','Économie & marchés'],['Europe','Football européen'],['France','Football français'],['Portugal','Football portugais']],
     mkn:{gold:'Or',silver:'Argent',gas:'Gaz naturel'}},
-  pt:{tag:'Edição mundial',autoScroll:'Rolagem automática',refresh:'Atualizar',add:'Adicionar fonte',
+  pt:{copy:'Copiar fontes para o site',copied:'Copiado ✓',shareHint:'As fontes adicionadas ficam guardadas neste navegador. Para as guardar no site (todos os dispositivos), copie-as e cole-as em sources.json no GitHub.',tag:'Edição mundial',autoScroll:'Rolagem automática',refresh:'Atualizar',add:'Adicionar fonte',
     srcTitle:'Fontes',srcSub:'O Meridian News agrega feeds RSS públicos. Os títulos e resumos pertencem aos respetivos editores; cada artigo remete para o site original.',
     quotes:'Cotações:',gnote:'Algumas secções usam',auto:'Atualização automática a cada 10 min',lastUpd:'Última atualização',
     dlgTitle:'Adicionar uma fonte',dlgSub:'Cole o endereço de um feed RSS ou Atom.',fName:'Nome',fUrl:'URL do feed',fCat:'Secção',fLang:'Idioma',close:'Fechar',addBtn:'Adicionar',mine:'As minhas fontes',remove:'Remover',
@@ -240,7 +247,7 @@ const I18N = {
     dOk:'Feed ativo',dKo:'Feed inacessível',dNo:'Não carregado',grp:'Futebol',
     cats:[['Mundo','Notícias internacionais'],['França','Notícias de França'],['Portugal','Notícias de Portugal'],['Economia','Economia e mercados'],['Europa','Futebol europeu'],['França','Futebol francês'],['Portugal','Futebol português']],
     mkn:{gold:'Ouro',silver:'Prata',gas:'Gás natural'}},
-  es:{tag:'Edición mundial',autoScroll:'Desplazamiento auto',refresh:'Actualizar',add:'Añadir fuente',
+  es:{copy:'Copiar fuentes para el sitio',copied:'Copiado ✓',shareHint:'Las fuentes añadidas se guardan en este navegador. Para guardarlas en el sitio (todos los dispositivos), cópialas y pégalas en sources.json en GitHub.',tag:'Edición mundial',autoScroll:'Desplazamiento auto',refresh:'Actualizar',add:'Añadir fuente',
     srcTitle:'Fuentes',srcSub:'Meridian News agrega feeds RSS públicos. Los titulares y resúmenes pertenecen a sus editores; cada artículo enlaza al sitio original.',
     quotes:'Cotizaciones:',gnote:'Algunas secciones usan',auto:'Actualización automática cada 10 min',lastUpd:'Última actualización',
     dlgTitle:'Añadir una fuente',dlgSub:'Pega la dirección de un feed RSS o Atom.',fName:'Nombre',fUrl:'URL del feed',fCat:'Sección',fLang:'Idioma',close:'Cerrar',addBtn:'Añadir',mine:'Mis fuentes',remove:'Quitar',
@@ -363,7 +370,18 @@ let custom = store.get('mn_custom',[]);
 let current = store.get('mn_cat','world');
 let cache = {};
 let status = store.get('mn_status',{});
-const sources = ()=>DEFAULT_SOURCES.concat(custom).filter(s=>!s.lang||s.lang===lang);
+let shared=[];   // sources enregistrées dans sources.json (visibles sur tous vos appareils)
+function loadShared(){
+  return fetch('sources.json?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():[]).catch(()=>[])
+    .then(a=>{shared=Array.isArray(a)?a.filter(x=>x&&x.name&&/^https?:\/\//.test(x.url)&&CAT_IDS.includes(x.cat)):[]});
+}
+const sources = ()=>{
+  const seen=new Set();
+  return DEFAULT_SOURCES.concat(shared,custom).filter(s=>{
+    if(seen.has(s.url+'|'+s.cat)) return false; seen.add(s.url+'|'+s.cat);
+    return !s.lang||s.lang===lang;
+  });
+};
 
 /* Instantané préparé côté serveur (GitHub Actions) : évite les blocages CORS */
 let snapP=Promise.resolve(null);
@@ -567,7 +585,15 @@ $('#s-ok').onclick=()=>{
   if(l!==lang){lang=l;try{localStorage.setItem('mn_lang',lang)}catch(_){}applyI18n()}
   drawSources();show(cat,true);
 };
-$('#refresh').onclick=()=>{loadSnap();cache={};loadMarkets();show(current,true)};
+$('#s-copy').onclick=async()=>{
+  const seen=new Set(),out=[];
+  [...shared,...custom].forEach(x=>{if(!seen.has(x.url)){seen.add(x.url);out.push({name:x.name,url:x.url,cat:x.cat,lang:x.lang||lang})}});
+  const txt=JSON.stringify(out,null,2), ta=$('#s-json');
+  ta.hidden=false;ta.value=txt;ta.focus();ta.select();
+  let ok=false;try{await navigator.clipboard.writeText(txt);ok=true}catch(e){try{ok=document.execCommand('copy')}catch(_){}}
+  if(ok){$('#s-copy').textContent=T('copied');setTimeout(()=>$('#s-copy').textContent=T('copy'),2000)}
+};
+$('#refresh').onclick=()=>{loadSnap();cache={};loadMarkets();loadShared().then(()=>{drawSources();show(current,true)})};
 
 /* ---- Défilement horizontal des articles (droite -> gauche) ---- */
 const feed=$('#feed');
@@ -608,8 +634,9 @@ setAuto(auto);
 requestAnimationFrame(marquee);
 loadSnap();
 applyI18n();
-show(current);loadMarkets();
-setInterval(()=>{loadSnap();cache={};show(current,true)},10*60*1000);
+loadShared().then(()=>{drawSources();show(current)});
+loadMarkets();
+setInterval(()=>{loadSnap();loadShared().then(()=>{cache={};show(current,true)})},10*60*1000);
 setInterval(loadMarkets,5*60*1000);
 </script>
 </body>
