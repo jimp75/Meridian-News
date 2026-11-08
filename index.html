@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meridian News</title>
+<style>
+:root{
+  --bg:#f4f3ef;--paper:#ffffff;--ink:#14161a;--ink2:#3d424b;--mute:#767c87;--line:#dedcd5;--line2:#ece9e2;
+  --acc:#9b1c1c;--acc-ink:#fff;--up:#0b7a3e;--down:#b42318;--navy:#0f1b2d;--tick:#0a1220;
+  --serif:'Source Serif 4','Iowan Old Style','Palatino Linotype',Georgia,serif;
+  --sans:Inter,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#0d0f13;--paper:#15181d;--ink:#eeece6;--ink2:#c3c6cc;--mute:#8b919b;--line:#272b33;--line2:#1e2229;
+  --acc:#e5675c;--acc-ink:#14161a;--up:#4cd48a;--down:#ff7b72;--navy:#06090e;--tick:#04060a}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button,select{font:inherit;cursor:pointer;color:inherit}
+
+.top{position:sticky;top:0;z-index:20;box-shadow:0 1px 0 var(--line),0 6px 18px -12px #0006}
+.masthead{background:var(--navy);color:#fff;border-bottom:3px solid var(--acc)}
+.mast-in{max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:20px}
+.logo{display:flex;align-items:baseline;gap:10px;text-decoration:none}
+.logo .mark{font:700 28px/1 var(--serif);letter-spacing:.2px}
+.logo .mark i{font-style:normal;color:var(--acc);filter:brightness(1.35)}
+.logo .tag{font:600 10px var(--sans);letter-spacing:.22em;text-transform:uppercase;color:#8e99ab;border-left:1px solid #2c3a52;padding-left:10px}
+.date{margin-left:auto;font:500 13px var(--sans);color:#aab3c2;text-transform:capitalize}
+.tools{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:6px;font:600 13px var(--sans);border:1px solid #33425c;background:transparent;color:#e8ecf3;transition:.15s}
+.btn:hover{background:#1a2a44;border-color:#4a5d80}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.spin svg{animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.langs{display:inline-flex;border:1px solid #33425c;border-radius:6px;overflow:hidden}
+.langs button{background:transparent;border:0;padding:8px 10px;font:700 12px var(--sans);letter-spacing:.06em;color:#8e99ab;transition:.15s}
+.langs button+button{border-left:1px solid #33425c}
+.langs button:hover{color:#fff;background:#1a2a44}
+.langs button.on{background:#e8ecf3;color:var(--navy)}
+
+#ticker{background:var(--tick);color:#e6e9ef;overflow:hidden;white-space:nowrap;border-bottom:1px solid #1b2433;position:relative}
+#ticker::before,#ticker::after{content:"";position:absolute;top:0;bottom:0;width:48px;z-index:2;pointer-events:none}
+#ticker::before{left:0;background:linear-gradient(90deg,var(--tick),transparent)}
+#ticker::after{right:0;background:linear-gradient(270deg,var(--tick),transparent)}
+#tick-in{display:inline-block;padding:9px 0;animation:marq 70s linear infinite;font:500 12.5px var(--mono)}
+#ticker:hover #tick-in{animation-play-state:paused}
+@keyframes marq{to{transform:translateX(-50%)}}
+.t{display:inline-flex;align-items:baseline;gap:8px;padding:0 20px;border-right:1px solid #1f2a3d}
+.t .n{color:#8e99ab;font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:11px}
+.t .p{color:#fff}
+.t .up{color:#4cd48a}.t .down{color:#ff7b72}
+
+nav{background:var(--paper);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;overflow-x:auto;scrollbar-width:none}
+.nav-in::-webkit-scrollbar{display:none}
+.nav-in button{background:none;border:0;border-bottom:3px solid transparent;padding:14px 16px 11px;font:600 13px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--mute);white-space:nowrap;transition:.15s}
+.nav-in button:hover{color:var(--ink)}
+.nav-in button.on{color:var(--ink);border-bottom-color:var(--acc)}
+.nav-in .grp{align-self:center;font:700 10px var(--sans);letter-spacing:.2em;color:var(--acc);padding:0 4px 0 18px;margin-left:10px;border-left:1px solid var(--line);text-transform:uppercase}
+
+main{max-width:1120px;margin:0 auto;padding:28px 24px 48px;min-height:60vh}
+.head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:22px}
+.head h1{margin:0;font:700 26px var(--serif);letter-spacing:-.2px}
+.head .status{font:500 12px var(--sans);color:var(--mute);text-align:right}
+.autobar .btn.ic{padding:6px 11px;font-size:15px;line-height:1}
+.autobar{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin:-8px 0 14px;font:600 11px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.autobar .btn{border-color:var(--line);color:var(--ink);padding:6px 12px;font-size:12px}
+.autobar .btn:hover{background:var(--line2)}
+.autobar .btn.on{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+@media(max-width:760px){.autobar{justify-content:space-between}.autobar span{display:none}}
+.strip{display:flex;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;scroll-behavior:auto;overscroll-behavior-x:contain;margin:0 -24px;padding:2px 24px 8px;cursor:grab}
+.strip::-webkit-scrollbar{display:none}
+.set{display:flex;gap:12px;padding-right:12px;flex:none}
+.card{width:230px;flex:none;display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden;text-decoration:none;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--acc);transform:translateY(-2px)}
+.card .ph{aspect-ratio:16/9;background:var(--line2);overflow:hidden}
+.card .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.card .ph.none{display:flex;align-items:center;justify-content:center;font:700 26px var(--serif);color:var(--line)}
+.card .body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.card h3{margin:0;font:700 14.5px/1.3 var(--serif);letter-spacing:-.1px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.card:hover h3{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.card p{margin:0;color:var(--ink2);font-size:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .when{margin-top:auto;padding-top:6px}
+.card.sk{height:250px;background:linear-gradient(90deg,transparent,var(--line2),transparent) var(--paper);background-size:200% 100%;animation:sk 1.4s infinite}
+@media(max-width:760px){.card{width:200px}.strip{margin:0 -16px;padding:2px 16px 8px}}
+.lead{display:grid;grid-template-columns:1.35fr 1fr;gap:28px;padding-bottom:26px;margin-bottom:8px;border-bottom:1px solid var(--line);text-decoration:none}
+.lead .ph{aspect-ratio:16/10;background:var(--line2);border-radius:4px;overflow:hidden}
+.lead .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.kick{font:700 10.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--acc)}
+.lead h2{margin:8px 0 12px;font:700 30px/1.15 var(--serif);letter-spacing:-.4px}
+.lead:hover h2,.row:hover h3{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.lead p{margin:0 0 14px;color:var(--ink2);font-size:16px;line-height:1.55}
+.when{font:500 12px var(--sans);color:var(--mute)}
+.lead.noimg{grid-template-columns:1fr}
+.row{display:grid;grid-template-columns:1fr 168px;gap:22px;padding:20px 0;border-bottom:1px solid var(--line);text-decoration:none}
+.row.noimg{grid-template-columns:1fr}
+.row h3{margin:5px 0 7px;font:700 19px/1.28 var(--serif);letter-spacing:-.15px}
+.row p{margin:0 0 9px;color:var(--ink2);font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.row .ph{width:168px;height:112px;border-radius:4px;overflow:hidden;background:var(--line2)}
+.row .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.empty{padding:40px 0;color:var(--mute);text-align:center}
+.skel{height:92px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,transparent,var(--line2),transparent);background-size:200% 100%;animation:sk 1.4s infinite}
+@keyframes sk{from{background-position:200% 0}to{background-position:-200% 0}}
+
+footer{background:var(--navy);color:#aab3c2;margin-top:20px}
+.foot-in{max-width:1120px;margin:0 auto;padding:34px 24px 26px}
+footer h4{margin:0 0 4px;font:700 11px var(--sans);letter-spacing:.2em;text-transform:uppercase;color:#fff}
+footer .sub{margin:0 0 22px;font-size:13px;color:#8e99ab}
+.src-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:24px 28px}
+.src-grid h5{margin:0 0 8px;font:700 11px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#d9deea;padding-bottom:6px;border-bottom:1px solid #22304a}
+.src-grid ul{list-style:none;margin:0;padding:0}
+.src-grid li{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:13px}
+.src-grid a{color:#aab3c2;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src-grid a:hover{color:#fff;text-decoration:underline}
+.dot{width:7px;height:7px;border-radius:50%;background:#4a566d;flex:none}
+.dot.ok{background:#4cd48a}.dot.ko{background:#ff7b72}
+.cnt{margin-left:auto;font:500 11px var(--mono);color:#6e7a92}
+.legal{margin-top:26px;padding-top:16px;border-top:1px solid #22304a;font-size:12px;color:#7d889e;display:flex;flex-wrap:wrap;gap:6px 22px;justify-content:space-between}
+.legal a{color:#aab3c2}
+.credit{margin-top:18px;text-align:center;font:600 12px var(--sans);letter-spacing:.12em;color:#8e99ab}
+
+dialog{border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);padding:0;width:min(480px,92vw);box-shadow:0 24px 60px -20px #000a}
+dialog::backdrop{background:#0b1220b0;backdrop-filter:blur(2px)}
+.dlg-h{padding:18px 22px;border-bottom:1px solid var(--line)}
+.dlg-h h3{margin:0;font:700 20px var(--serif)}
+.dlg-h p{margin:3px 0 0;font-size:13px;color:var(--mute)}
+.dlg-b{padding:6px 22px 4px}
+dialog label{display:block;margin:14px 0 5px;font:600 12px var(--sans);letter-spacing:.04em;color:var(--ink2)}
+dialog input,dialog select{width:100%;padding:10px 11px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:14px var(--sans)}
+dialog input:focus,dialog select:focus{outline:2px solid var(--acc);outline-offset:-1px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dlg-f{display:flex;gap:8px;justify-content:flex-end;padding:16px 22px;border-top:1px solid var(--line);margin-top:6px}
+dialog .btn{border-color:var(--line);color:var(--ink)}dialog .btn:hover{background:var(--line2)}
+dialog .btn.primary{border-color:var(--acc);color:var(--acc-ink)}
+.mylist{padding:0 22px 12px;font-size:13px}
+.mylist div{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line2)}
+.mylist span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mylist button{background:none;border:0;color:var(--acc);font-weight:600;font-size:12px}
+.mylist .ttl{border:0;font:700 11px var(--sans);letter-spacing:.14em;color:var(--mute);text-transform:uppercase}
+.err{color:var(--down);font-size:12.5px;margin-top:8px;min-height:1em}
+
+@media(max-width:760px){
+  .mast-in{flex-wrap:wrap;gap:10px;padding:12px 16px}.date{display:none}.tools{margin-left:auto}
+  .btn span.lbl{display:none}.logo .tag{display:none}
+  main{padding:20px 16px 40px}.lead{grid-template-columns:1fr;gap:16px}.lead h2{font-size:24px}
+  .row{grid-template-columns:1fr 110px;gap:14px}.row .ph{width:110px;height:78px}.row h3{font-size:16.5px}.row p{display:none}
+  .nav-in{padding:0 8px}.foot-in{padding:28px 16px}
+  .head{flex-direction:column;gap:4px}.head .status{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="masthead"><div class="mast-in">
+    <a class="logo" href="#" onclick="scrollTo(0,0);return false"><span class="mark">Meridian <i>News</i></span><span class="tag" data-i="tag"></span></a>
+    <div class="date" id="date"></div>
+    <div class="tools">
+      <div class="langs" id="langs" role="group" aria-label="Language"></div>
+      <button class="btn" id="refresh"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg><span class="lbl" data-i="refresh"></span></button>
+      <button class="btn primary" id="add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="lbl" data-i="add"></span></button>
+    </div>
+  </div></div>
+  <div id="ticker"><div id="tick-in"></div>
+  </div>
+  <nav><div class="nav-in" id="menu"></div></nav>
+</div>
+
+<main>
+  <div class="head"><h1 id="title"></h1><span class="status" id="status"></span></div>
+  <div class="autobar">
+    <button class="btn ic" id="prev" aria-label="Previous">‹</button><button class="btn ic" id="next" aria-label="Next">›</button>
+    <button class="btn on" id="auto" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span data-i="autoScroll" style="letter-spacing:.04em"></span></button>
+  </div>
+  <div id="feed" class="strip"></div>
+</main>
+
+<footer>
+  <div class="foot-in">
+    <h4 data-i="srcTitle"></h4>
+    <p class="sub" data-i="srcSub"></p>
+    <div class="src-grid" id="sources"></div>
+    <div class="legal">
+      <span><span data-i="quotes"></span> <a href="https://finance.yahoo.com" target="_blank" rel="noopener">Yahoo Finance</a> / <a href="https://stooq.com" target="_blank" rel="noopener">Stooq</a>. <span data-i="gnote"></span> <a href="https://news.google.com" target="_blank" rel="noopener">Google News</a>.</span>
+      <span><span data-i="auto"></span> · <span id="upd"></span></span>
+    </div>
+    <div class="credit">© 2026 by PJ</div>
+  </div>
+</footer>
+
+<dialog id="dlg">
+  <div class="dlg-h"><h3 data-i="dlgTitle"></h3><p data-i="dlgSub"></p></div>
+  <div class="dlg-b">
+    <label for="s-name" data-i="fName"></label><input id="s-name">
+    <label for="s-url" data-i="fUrl"></label><input id="s-url" placeholder="https://example.com/rss.xml">
+    <div class="two">
+      <div><label for="s-cat" data-i="fCat"></label><select id="s-cat"></select></div>
+      <div><label for="s-lang" data-i="fLang"></label><select id="s-lang"></select></div>
+    </div>
+    <div class="err" id="s-err"></div>
+  </div>
+  <div class="mylist" id="s-list"></div>
+  <div class="dlg-f" style="margin-top:0"><button class="btn" id="s-cancel" data-i="close"></button><button class="btn primary" id="s-ok" data-i="addBtn"></button></div>
+</dialog>
+
+<script>
+/* ================= Langues / interface ================= */
+const LANGS = {en:'English', fr:'Français', pt:'Português', es:'Español'};
+const LOCALE = {en:'en-GB', fr:'fr-FR', pt:'pt-PT', es:'es-ES'};
+const CAT_IDS = ['world','france','portugal','eco','fe','ff','fp'];
+const I18N = {
+  en:{tag:'World edition',autoScroll:'Auto-scroll',refresh:'Refresh',add:'Add a source',
+    srcTitle:'Sources',srcSub:'Meridian News aggregates public RSS feeds. Headlines and summaries belong to their publishers; each article links to the original site.',
+    quotes:'Market data:',gnote:'Some sections use',auto:'Auto-refresh every 10 min',lastUpd:'Last update',
+    dlgTitle:'Add a source',dlgSub:'Paste the address of an RSS or Atom feed.',fName:'Name',fUrl:'Feed URL',fCat:'Section',fLang:'Language',close:'Close',addBtn:'Add',mine:'My sources',remove:'Remove',
+    err:'Enter a name and a URL starting with http:// or https://',empty:'No articles available right now (feeds unreachable or offline).<br>Try “Refresh” or add a source.',
+    articles:'articles',srcs:'sources',upd:'Updated',cache:'cached',updating:'updating…',mk:'Markets',mkLoad:'Loading…',mkNo:'Unavailable (offline or network blocked)',
+    dOk:'Feed active',dKo:'Feed unreachable',dNo:'Not loaded',grp:'Football',
+    cats:[['World','International news'],['France','News from France'],['Portugal','News from Portugal'],['Economy','Economy & markets'],['Europe','European football'],['France','French football'],['Portugal','Portuguese football']],
+    mkn:{gold:'Gold',silver:'Silver',gas:'Natural gas'}},
+  fr:{tag:'Édition mondiale',autoScroll:'Défilement auto',refresh:'Actualiser',add:'Ajouter une source',
+    srcTitle:'Sources',srcSub:"Meridian News agrège des flux RSS publics. Les titres et résumés appartiennent à leurs éditeurs ; chaque article renvoie vers le site d'origine.",
+    quotes:'Cours :',gnote:'Certaines rubriques utilisent',auto:'Actualisation automatique toutes les 10 min',lastUpd:'Dernière mise à jour',
+    dlgTitle:'Ajouter une source',dlgSub:"Collez l'adresse d'un flux RSS ou Atom.",fName:'Nom',fUrl:'URL du flux',fCat:'Rubrique',fLang:'Langue',close:'Fermer',addBtn:'Ajouter',mine:'Mes sources',remove:'Retirer',
+    err:'Indiquez un nom et une URL commençant par http:// ou https://',empty:"Aucun article disponible pour le moment (flux inaccessibles ou hors ligne).<br>Essayez « Actualiser » ou ajoutez une source.",
+    articles:'articles',srcs:'sources',upd:'Mis à jour',cache:'cache',updating:'actualisation…',mk:'Marchés',mkLoad:'Chargement…',mkNo:'Indisponibles (hors ligne ou réseau bloqué)',
+    dOk:'Flux actif',dKo:'Flux inaccessible',dNo:'Non chargé',grp:'Football',
+    cats:[['Monde','Actualité internationale'],['France','Actualité en France'],['Portugal','Actualité au Portugal'],['Économie','Économie & marchés'],['Europe','Football européen'],['France','Football français'],['Portugal','Football portugais']],
+    mkn:{gold:'Or',silver:'Argent',gas:'Gaz naturel'}},
+  pt:{tag:'Edição mundial',autoScroll:'Rolagem automática',refresh:'Atualizar',add:'Adicionar fonte',
+    srcTitle:'Fontes',srcSub:'O Meridian News agrega feeds RSS públicos. Os títulos e resumos pertencem aos respetivos editores; cada artigo remete para o site original.',
+    quotes:'Cotações:',gnote:'Algumas secções usam',auto:'Atualização automática a cada 10 min',lastUpd:'Última atualização',
+    dlgTitle:'Adicionar uma fonte',dlgSub:'Cole o endereço de um feed RSS ou Atom.',fName:'Nome',fUrl:'URL do feed',fCat:'Secção',fLang:'Idioma',close:'Fechar',addBtn:'Adicionar',mine:'As minhas fontes',remove:'Remover',
+    err:'Indique um nome e um URL que comece por http:// ou https://',empty:'Nenhum artigo disponível de momento (feeds inacessíveis ou sem ligação).<br>Tente «Atualizar» ou adicione uma fonte.',
+    articles:'artigos',srcs:'fontes',upd:'Atualizado',cache:'cache',updating:'a atualizar…',mk:'Mercados',mkLoad:'A carregar…',mkNo:'Indisponível (sem ligação ou rede bloqueada)',
+    dOk:'Feed ativo',dKo:'Feed inacessível',dNo:'Não carregado',grp:'Futebol',
+    cats:[['Mundo','Notícias internacionais'],['França','Notícias de França'],['Portugal','Notícias de Portugal'],['Economia','Economia e mercados'],['Europa','Futebol europeu'],['França','Futebol francês'],['Portugal','Futebol português']],
+    mkn:{gold:'Ouro',silver:'Prata',gas:'Gás natural'}},
+  es:{tag:'Edición mundial',autoScroll:'Desplazamiento auto',refresh:'Actualizar',add:'Añadir fuente',
+    srcTitle:'Fuentes',srcSub:'Meridian News agrega feeds RSS públicos. Los titulares y resúmenes pertenecen a sus editores; cada artículo enlaza al sitio original.',
+    quotes:'Cotizaciones:',gnote:'Algunas secciones usan',auto:'Actualización automática cada 10 min',lastUpd:'Última actualización',
+    dlgTitle:'Añadir una fuente',dlgSub:'Pega la dirección de un feed RSS o Atom.',fName:'Nombre',fUrl:'URL del feed',fCat:'Sección',fLang:'Idioma',close:'Cerrar',addBtn:'Añadir',mine:'Mis fuentes',remove:'Quitar',
+    err:'Indica un nombre y una URL que empiece por http:// o https://',empty:'No hay artículos disponibles ahora (feeds inaccesibles o sin conexión).<br>Prueba «Actualizar» o añade una fuente.',
+    articles:'artículos',srcs:'fuentes',upd:'Actualizado',cache:'caché',updating:'actualizando…',mk:'Mercados',mkLoad:'Cargando…',mkNo:'No disponible (sin conexión o red bloqueada)',
+    dOk:'Feed activo',dKo:'Feed inaccesible',dNo:'Sin cargar',grp:'Fútbol',
+    cats:[['Mundo','Actualidad internacional'],['Francia','Actualidad de Francia'],['Portugal','Actualidad de Portugal'],['Economía','Economía y mercados'],['Europa','Fútbol europeo'],['Francia','Fútbol francés'],['Portugal','Fútbol portugués']],
+    mkn:{gold:'Oro',silver:'Plata',gas:'Gas natural'}}
+};
+let lang = (()=>{try{const l=localStorage.getItem('mn_lang');if(l&&I18N[l])return l}catch(e){}
+  const n=(navigator.language||'fr').slice(0,2);return I18N[n]?n:'fr'})();
+const T = k => I18N[lang][k];
+const catIdx = id => CAT_IDS.indexOf(id);
+const catLabel = id => I18N[lang].cats[catIdx(id)][0];
+const catTitle = id => I18N[lang].cats[catIdx(id)][1];
+const catFull = id => catIdx(id)>=4 ? T('grp')+' · '+catLabel(id) : catLabel(id);
+
+/* ================= Sources ================= */
+const GN = {en:'hl=en-GB&gl=GB&ceid=GB:en', fr:'hl=fr&gl=FR&ceid=FR:fr', pt:'hl=pt-PT&gl=PT&ceid=PT:pt-150', es:'hl=es&gl=ES&ceid=ES:es'};
+const S = (lang,cat,name,url,site)=>({lang,cat,name,url,site});
+const G = (lang,cat,name,q)=>({lang,cat,name:name+' (Google News)',url:`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&${GN[lang]}`,site:'https://news.google.com'});
+const DEFAULT_SOURCES = [
+ /* ---------- English ---------- */
+ S('en','world','BBC News – World','https://feeds.bbci.co.uk/news/world/rss.xml','https://www.bbc.com/news/world'),
+ S('en','world','The Guardian – World','https://www.theguardian.com/world/rss','https://www.theguardian.com/world'),
+ S('en','world','Al Jazeera','https://www.aljazeera.com/xml/rss/all.xml','https://www.aljazeera.com'),
+ S('en','france','France 24 – France','https://www.france24.com/en/france/rss','https://www.france24.com/en/france/'),
+ S('en','france','RFI English','https://www.rfi.fr/en/france/rss','https://www.rfi.fr/en/france/'),
+ G('en','france','France news','France news'),
+ S('en','portugal','Portugal Resident','https://www.portugalresident.com/feed/','https://www.portugalresident.com'),
+ S('en','portugal','The Portugal News','https://www.theportugalnews.com/rss/news','https://www.theportugalnews.com'),
+ G('en','portugal','Portugal news','Portugal news'),
+ S('en','eco','BBC News – Business','https://feeds.bbci.co.uk/news/business/rss.xml','https://www.bbc.com/news/business'),
+ S('en','eco','The Guardian – Business','https://www.theguardian.com/business/rss','https://www.theguardian.com/business'),
+ S('en','eco','CNBC – Top News','https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114','https://www.cnbc.com'),
+ S('en','fe','BBC Sport – Football','https://feeds.bbci.co.uk/sport/football/rss.xml','https://www.bbc.com/sport/football'),
+ S('en','fe','Sky Sports – Football','https://www.skysports.com/rss/12040','https://www.skysports.com/football'),
+ S('en','fe','The Guardian – Football','https://www.theguardian.com/football/rss','https://www.theguardian.com/football'),
+ G('en','ff','Ligue 1','Ligue 1 football'),
+ S('en','ff','The Guardian – Ligue 1','https://www.theguardian.com/football/ligue-1/rss','https://www.theguardian.com/football/ligue-1'),
+ G('en','fp','Primeira Liga','Primeira Liga Benfica Porto Sporting'),
+ S('en','fp','Portugal Resident – Sport','https://www.portugalresident.com/category/sport/feed/','https://www.portugalresident.com'),
+ /* ---------- Français ---------- */
+ S('fr','world','Le Monde – International','https://www.lemonde.fr/international/rss_full.xml','https://www.lemonde.fr/international/'),
+ S('fr','world','France 24','https://www.france24.com/fr/rss','https://www.france24.com/fr/'),
+ S('fr','world','BBC News – Monde','https://feeds.bbci.co.uk/afrique/rss.xml','https://www.bbc.com/afrique'),
+ S('fr','france','Le Monde – À la une','https://www.lemonde.fr/rss/une.xml','https://www.lemonde.fr'),
+ S('fr','france','franceinfo','https://www.francetvinfo.fr/titres.rss','https://www.francetvinfo.fr'),
+ S('fr','france','France 24 – France','https://www.france24.com/fr/france/rss','https://www.france24.com/fr/france/'),
+ S('fr','portugal','RFI – Portugal','https://www.rfi.fr/fr/europe/rss','https://www.rfi.fr/fr/europe/'),
+ G('fr','portugal','Portugal actualité','Portugal actualité'),
+ S('fr','eco','Le Monde – Économie','https://www.lemonde.fr/economie/rss_full.xml','https://www.lemonde.fr/economie/'),
+ S('fr','eco','France 24 – Éco & Tech','https://www.france24.com/fr/éco-tech/rss','https://www.france24.com/fr/éco-tech/'),
+ S('fr','eco','BFM Business','https://www.bfmtv.com/rss/economie/','https://www.bfmtv.com/economie/'),
+ G('fr','fe','Ligue des champions','Ligue des champions football'),
+ S('fr','fe','Le Monde – Football','https://www.lemonde.fr/football/rss_full.xml','https://www.lemonde.fr/football/'),
+ S('fr','ff',"L'Équipe – Football",'https://dwh.lequipe.fr/api/edito/rss?path=/Football/','https://www.lequipe.fr/Football/'),
+ S('fr','ff','Foot Mercato','https://www.footmercato.net/flux-rss','https://www.footmercato.net'),
+ G('fr','fp','Football portugais','Primeira Liga Benfica Porto Sporting'),
+ /* ---------- Português ---------- */
+ S('pt','world','RTP Notícias – Mundo','https://www.rtp.pt/noticias/rss/mundo','https://www.rtp.pt/noticias/mundo'),
+ S('pt','world','Observador – Mundo','https://observador.pt/seccao/mundo/feed/','https://observador.pt/seccao/mundo/'),
+ S('pt','world','Euronews','https://pt.euronews.com/rss','https://pt.euronews.com'),
+ G('pt','france','França','França notícias'),
+ S('pt','france','RFI – França','https://www.rfi.fr/pt/fran%C3%A7a/rss','https://www.rfi.fr/pt/'),
+ S('pt','portugal','RTP Notícias – País','https://www.rtp.pt/noticias/rss/pais','https://www.rtp.pt/noticias/pais'),
+ S('pt','portugal','Público','https://feeds.feedburner.com/PublicoRSS','https://www.publico.pt'),
+ S('pt','portugal','Observador','https://observador.pt/feed/','https://observador.pt'),
+ S('pt','eco','ECO','https://eco.sapo.pt/feed/','https://eco.sapo.pt'),
+ S('pt','eco','Observador – Economia','https://observador.pt/seccao/economia/feed/','https://observador.pt/seccao/economia/'),
+ S('pt','eco','Jornal de Negócios','https://www.jornaldenegocios.pt/rss','https://www.jornaldenegocios.pt'),
+ G('pt','fe','Liga dos Campeões','Liga dos Campeões futebol'),
+ S('pt','fe','A Bola','https://www.abola.pt/rss','https://www.abola.pt'),
+ G('pt','ff','Ligue 1','Ligue 1 futebol'),
+ S('pt','fp','Record','https://www.record.pt/rss','https://www.record.pt'),
+ S('pt','fp','Maisfutebol','https://maisfutebol.iol.pt/rss','https://maisfutebol.iol.pt'),
+ /* ---------- Español ---------- */
+ S('es','world','El País – Internacional','https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada','https://elpais.com/internacional/'),
+ S('es','world','BBC Mundo','https://feeds.bbci.co.uk/mundo/rss.xml','https://www.bbc.com/mundo'),
+ S('es','world','Euronews','https://es.euronews.com/rss','https://es.euronews.com'),
+ G('es','france','Francia','Francia noticias'),
+ S('es','france','RFI – Francia','https://www.rfi.fr/es/francia/rss','https://www.rfi.fr/es/'),
+ G('es','portugal','Portugal','Portugal noticias'),
+ S('es','portugal','Euronews – Portugal','https://es.euronews.com/rss?level=theme&name=news','https://es.euronews.com'),
+ S('es','eco','El País – Economía','https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada','https://elpais.com/economia/'),
+ S('es','eco','Expansión','https://e00-expansion.uecdn.es/rss/portada.xml','https://www.expansion.com'),
+ S('es','eco','Cinco Días','https://cincodias.elpais.com/rss/cincodias/portada.xml','https://cincodias.elpais.com'),
+ S('es','fe','Marca – Fútbol','https://e00-marca.uecdn.es/rss/futbol/primera-division.xml','https://www.marca.com/futbol.html'),
+ S('es','fe','Mundo Deportivo','https://www.mundodeportivo.com/rss/futbol','https://www.mundodeportivo.com/futbol'),
+ G('es','fe','Champions League','Champions League fútbol'),
+ G('es','ff','Ligue 1','Ligue 1 fútbol'),
+ G('es','fp','Primeira Liga','Primeira Liga Benfica Porto Sporting')
+];
+const MARKETS = [
+  /* Europe */ ['CAC 40','^FCHI'],['DAX','^GDAXI'],['Euro Stoxx 50','^STOXX50E'],['FTSE 100','^FTSE'],['IBEX 35','^IBEX'],['FTSE MIB','FTSE.MI'],['AEX','^AEX'],['PSI','PSI20.LS'],
+  /* USA */ ['S&P 500','^GSPC'],['Nasdaq','^IXIC'],['Dow Jones','^DJI'],['Russell 2000','^RUT'],['VIX','^VIX'],
+  /* Asie */ ['Nikkei 225','^N225'],['Hang Seng','^HSI'],['Shanghai','000001.SS'],
+  /* Devises */ ['EUR/USD','EURUSD=X'],['EUR/GBP','EURGBP=X'],['USD/JPY','JPY=X'],['EUR/CHF','EURCHF=X'],
+  /* Crypto */ ['Bitcoin','BTC-USD'],['Ethereum','ETH-USD'],
+  /* Matières */ ['{gold}','GC=F'],['{silver}','SI=F'],['Brent','BZ=F'],['WTI','CL=F'],['{gas}','NG=F'],
+  /* Valeurs */ ['TotalEnergies','TTE.PA'],['LVMH','MC.PA'],['Airbus','AIR.PA'],['EDP','EDP.LS'],['Galp','GALP.LS'],['Jerónimo Martins','JMT.LS'],
+  ['Apple','AAPL'],['Microsoft','MSFT'],['Nvidia','NVDA'],['Tesla','TSLA']
+];
+// Source de secours (Stooq) : symbole Yahoo -> symbole Stooq
+const STOOQ = {'^FCHI':'^cac','^GDAXI':'^dax','^FTSE':'^ukx','^IBEX':'^ibex','^AEX':'^aex','^GSPC':'^spx','^IXIC':'^ndq','^DJI':'^dji','^N225':'^nkx','^HSI':'^hsi','EURUSD=X':'eurusd','EURGBP=X':'eurgbp','JPY=X':'usdjpy','BTC-USD':'btcusd','ETH-USD':'ethusd','GC=F':'xauusd','SI=F':'xagusd','AAPL':'aapl.us','MSFT':'msft.us','NVDA':'nvda.us','TSLA':'tsla.us','TTE.PA':'tte.fr','MC.PA':'mc.fr','AIR.PA':'air.fr'};
+const PROXIES = [
+  u=>u,
+  u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
+  u=>'https://corsproxy.io/?url='+encodeURIComponent(u)
+];
+
+/* ================= Utilitaires ================= */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let custom = store.get('mn_custom',[]);
+let current = store.get('mn_cat','world');
+let cache = {};
+let status = store.get('mn_status',{});
+const sources = ()=>DEFAULT_SOURCES.concat(custom).filter(s=>!s.lang||s.lang===lang);
+
+/* Instantané préparé côté serveur (GitHub Actions) : évite les blocages CORS */
+let snapP=Promise.resolve(null);
+function loadSnap(){snapP=fetch('news.json?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null)}
+async function fetchText(url, ms=9000){
+  const snap=await snapP;
+  if(snap&&snap.data&&snap.data[url]) return snap.data[url];
+  for(const p of PROXIES){
+    try{
+      const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),ms);
+      const r=await fetch(p(url),{signal:ctl.signal}); clearTimeout(t);
+      if(!r.ok) continue;
+      const txt=await r.text();
+      if(txt && txt.length>50) return txt;
+    }catch(e){}
+  }
+  throw new Error('inaccessible');
+}
+const strip=h=>{const d=document.createElement('div');d.innerHTML=h||'';return (d.textContent||'').replace(/\s+/g,' ').trim()};
+function ago(ts){
+  if(!ts) return '';
+  const rtf=new Intl.RelativeTimeFormat(LOCALE[lang],{numeric:'auto'});
+  const m=Math.round((Date.now()-ts)/60000);
+  if(m<1) return rtf.format(0,'second');
+  if(m<60) return rtf.format(-m,'minute');
+  const h=Math.round(m/60); if(h<24) return rtf.format(-h,'hour');
+  return rtf.format(-Math.round(h/24),'day');
+}
+const safeUrl=u=>/^https?:\/\//i.test(u)?u:'#';
+const hhmm=d=>new Date(d).toLocaleTimeString(LOCALE[lang],{hour:'2-digit',minute:'2-digit'});
+
+/* ================= Parsing RSS / Atom ================= */
+function parseFeed(xml, src){
+  const doc=new DOMParser().parseFromString(xml,'text/xml');
+  if(doc.querySelector('parsererror')) return [];
+  const isGN=/news\.google\.com/.test(src.url);
+  return [...doc.querySelectorAll('item, entry')].slice(0,25).map(n=>{
+    const g=t=>{const e=n.getElementsByTagName(t)[0];return e?e.textContent:''};
+    let link=g('link'); const le=n.getElementsByTagName('link')[0];
+    if(le && le.getAttribute('href')) link=le.getAttribute('href');
+    const date=Date.parse(g('pubDate')||g('published')||g('updated')||g('dc:date'))||0;
+    let img='';
+    const media=n.getElementsByTagName('media:thumbnail')[0]||n.getElementsByTagName('media:content')[0]||n.getElementsByTagName('enclosure')[0];
+    if(media){const u=media.getAttribute('url');const ty=media.getAttribute('type')||'';if(u&&(!ty||ty.startsWith('image')))img=u}
+    if(!img){const m=(g('description')+g('content:encoded')+g('content')).match(/<img[^>]+src=["']([^"']+)/i);if(m)img=m[1]}
+    let title=strip(g('title')), name=src.name, desc=strip(g('description')||g('summary')||g('content')).slice(0,260);
+    if(isGN){ // "Titre - Éditeur"
+      const k=title.lastIndexOf(' - ');
+      if(k>0){name=title.slice(k+3);title=title.slice(0,k)}
+      desc='';img='';
+    }
+    return {title,link:link.trim(),date,desc,img,src:name};
+  }).filter(i=>i.title&&i.link);
+}
+async function loadSource(src){
+  try{
+    const items=parseFeed(await fetchText(src.url),src);
+    status[src.url]={n:items.length,at:Date.now()};
+    return items;
+  }catch(e){status[src.url]={n:0,at:Date.now()};return []}
+}
+
+/* ================= Fil d'actualité ================= */
+const ck = cat => lang+'_'+cat;
+async function loadCat(cat, force){
+  if(!force && cache[ck(cat)]) return cache[ck(cat)];
+  const list=sources().filter(s=>s.cat===cat);
+  const res=await Promise.all(list.map(loadSource));
+  store.set('mn_status',status); drawSources();
+  const seen=new Set();
+  const items=res.flat().filter(i=>!seen.has(i.link)&&!seen.has(i.title)&&seen.add(i.link)&&seen.add(i.title)).sort((a,b)=>b.date-a.date).slice(0,60);
+  const d={items,ok:res.filter(r=>r.length).length,total:list.length,at:Date.now()};
+  cache[ck(cat)]=d;
+  if(items.length) store.set('mn_cache_'+ck(cat),d);
+  return d;
+}
+function render(data, note){
+  const f=$('#feed'), st=$('#status');
+  if(!data||!data.items.length){f.innerHTML=`<div class="empty" style="width:100%">${T('empty')}</div>`;st.textContent='';return}
+  st.textContent=`${data.items.length} ${T('articles')} · ${data.ok}/${data.total} ${T('srcs')} · ${note||T('upd')+' '+ago(data.at)}`;
+  const items=data.items.slice(0,30);
+  const card=i=>`<a class="card" href="${esc(safeUrl(i.link))}" target="_blank" rel="noopener noreferrer" draggable="false">
+    ${i.img?`<div class="ph"><img loading="lazy" draggable="false" referrerpolicy="no-referrer" src="${esc(safeUrl(i.img))}" onerror="this.parentNode.className='ph none';this.remove()"></div>`:`<div class="ph none">${esc((i.src||'M')[0])}</div>`}
+    <div class="body"><span class="kick">${esc(i.src)}</span><h3>${esc(i.title)}</h3>${i.desc?`<p>${esc(i.desc)}</p>`:''}<span class="when">${ago(i.date)}</span></div></a>`;
+  let one=items.map(card).join('');
+  const reps=Math.max(1,Math.ceil(2*innerWidth/(items.length*242)));   // assez large pour boucler sans trou
+  one=one.repeat(reps);
+  f.innerHTML=`<div class="set">${one}</div><div class="set" aria-hidden="true">${one}</div>`;
+  f.scrollLeft=0;
+}
+async function show(cat, force){
+  current=cat; store.set('mn_cat',cat);
+  const myLang=lang;
+  $('#title').textContent=catTitle(cat);
+  [...document.querySelectorAll('#menu button')].forEach(b=>b.classList.toggle('on',b.dataset.id===cat));
+  const stale=store.get('mn_cache_'+ck(cat),null);
+  if(!cache[ck(cat)] && stale) render(stale,`${T('cache')} ${hhmm(stale.at)} · ${T('updating')}`);
+  else if(!cache[ck(cat)]) $('#feed').innerHTML='<div class="set">'+'<div class="card sk"></div>'.repeat(6)+'</div>';
+  $('#refresh').classList.add('spin');
+  const d=await loadCat(cat,force);
+  if(current===cat && lang===myLang) render(d.items.length?d:stale);
+  $('#refresh').classList.remove('spin');
+  $('#upd').textContent=T('lastUpd')+' '+hhmm(Date.now());
+}
+
+/* ================= Bandeau boursier ================= */
+async function quoteYahoo(sym){
+  const url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=5d';
+  const m=JSON.parse(await fetchText(url,7000)).chart.result[0].meta;
+  const price=m.regularMarketPrice, prev=m.chartPreviousClose||m.previousClose;
+  if(!(price>0)) throw 0;
+  return {price,chg:prev?(price-prev)/prev*100:0};
+}
+async function quoteStooq(sym){
+  const id=STOOQ[sym]; if(!id) throw 0;
+  const csv=await fetchText('https://stooq.com/q/l/?s='+encodeURIComponent(id)+'&f=sd2t2ohlc&h&e=csv',7000);
+  const r=csv.trim().split(/\r?\n/)[1].split(',');
+  const open=parseFloat(r[3]), close=parseFloat(r[6]);
+  if(!(close>0)) throw 0;
+  return {price:close,chg:open>0?(close-open)/open*100:0};  // variation vs ouverture du jour
+}
+const quote = async sym => { try{return await quoteYahoo(sym)}catch(e){return await quoteStooq(sym)} };
+let mkt=store.get('mn_mkt',null);
+async function loadMarkets(){
+  const res=await Promise.all(MARKETS.map(async([n,s])=>{try{return [n,await quote(s)]}catch(e){return [n,null]}}));
+  const ok=res.filter(r=>r[1]);
+  if(ok.length){mkt=ok;store.set('mn_mkt',ok)}
+  drawTicker();
+}
+function drawTicker(){
+  if(!mkt){$('#tick-in').innerHTML=`<span class="t"><span class="n">${T('mk')}</span><span class="p">${T('mkLoad')}</span></span>`;return}
+  const html=mkt.map(([n,q])=>{
+    const c=q.chg>=0?'up':'down', a=q.chg>=0?'▲':'▼';
+    const name=n[0]==='{'?I18N[lang].mkn[n.slice(1,-1)]:n;
+    return `<span class="t"><span class="n">${esc(name)}</span><span class="p">${q.price.toLocaleString(LOCALE[lang],{maximumFractionDigits:2})}</span><span class="${c}">${a} ${Math.abs(q.chg).toFixed(2)}%</span></span>`;
+  }).join('');
+  $('#tick-in').innerHTML=html+html;
+  $('#tick-in').style.animationDuration=Math.max(60,mkt.length*5)+'s';
+}
+
+/* ================= Pied de page ================= */
+function drawSources(){
+  const all=sources();
+  $('#sources').innerHTML=CAT_IDS.map(id=>{
+    const list=all.filter(s=>s.cat===id);
+    if(!list.length) return '';
+    return `<div><h5>${esc(catFull(id))}</h5><ul>`+list.map(s=>{
+      const st=status[s.url];
+      let site=s.site; if(!site){try{site=new URL(s.url).origin}catch(e){site='#'}}
+      return `<li><span class="dot ${!st?'':st.n?'ok':'ko'}" title="${!st?T('dNo'):st.n?T('dOk'):T('dKo')}"></span><a href="${esc(safeUrl(site))}" target="_blank" rel="noopener noreferrer">${esc(s.name)}</a>${st&&st.n?`<span class="cnt">${st.n}</span>`:''}</li>`;
+    }).join('')+`</ul></div>`;
+  }).join('');
+}
+
+/* ================= Interface ================= */
+function applyI18n(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-i]').forEach(e=>e.textContent=T(e.dataset.i));
+  $('#refresh').title=T('refresh');$('#add').title=T('add');
+  $('#s-name').placeholder={en:'e.g. The Times',fr:'Ex : Le Figaro',pt:'Ex.: Expresso',es:'Ej.: La Vanguardia'}[lang];
+  $('#date').textContent=new Date().toLocaleDateString(LOCALE[lang],{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  $('#langs').innerHTML=Object.keys(LANGS).map(l=>`<button data-l="${l}" class="${l===lang?'on':''}" title="${LANGS[l]}" aria-pressed="${l===lang}">${l.toUpperCase()}</button>`).join('');
+  buildMenu();
+  const cur=$('#s-lang').value||lang;
+  $('#s-lang').innerHTML=Object.entries(LANGS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  $('#s-lang').value=cur;
+  drawSources();drawTicker();
+}
+function buildMenu(){
+  let html='';
+  CAT_IDS.forEach((id,i)=>{
+    if(i===4) html+=`<span class="grp">${esc(T('grp'))}</span>`;
+    html+=`<button data-id="${id}" class="${id===current?'on':''}">${esc(catLabel(id))}</button>`;
+  });
+  $('#menu').innerHTML=html;
+  const c=$('#s-cat').value;
+  $('#s-cat').innerHTML=CAT_IDS.map(id=>`<option value="${id}">${esc(catFull(id))}</option>`).join('');
+  if(c) $('#s-cat').value=c;
+}
+$('#menu').onclick=e=>{const b=e.target.closest('button');if(b){show(b.dataset.id);scrollTo({top:0})}};
+$('#langs').onclick=e=>{
+  const b=e.target.closest('button');if(!b||b.dataset.l===lang)return;
+  lang=b.dataset.l;try{localStorage.setItem('mn_lang',lang)}catch(_){}
+  $('#s-lang').value=lang;
+  applyI18n();show(current);loadMarkets();
+};
+function drawCustom(){
+  $('#s-list').innerHTML=custom.length?`<div class="ttl">${esc(T('mine'))}</div>`+
+    custom.map((s,i)=>`<div><span>${esc(s.name)} — ${esc(catFull(s.cat))}${s.lang?' · '+s.lang.toUpperCase():''}</span><button data-i="${i}">${esc(T('remove'))}</button></div>`).join(''):'';
+}
+$('#s-list').onclick=e=>{const b=e.target.closest('button');if(!b)return;custom.splice(+b.dataset.i,1);store.set('mn_custom',custom);cache={};drawCustom();drawSources();show(current,true)};
+$('#add').onclick=()=>{$('#s-cat').value=current;$('#s-lang').value=lang;$('#s-err').textContent='';drawCustom();$('#dlg').showModal()};
+$('#s-cancel').onclick=()=>$('#dlg').close();
+$('#s-ok').onclick=()=>{
+  const name=$('#s-name').value.trim(),url=$('#s-url').value.trim();
+  if(!name||!/^https?:\/\//i.test(url)){$('#s-err').textContent=T('err');return}
+  const cat=$('#s-cat').value, l=$('#s-lang').value;
+  custom.push({name,url,cat,lang:l});store.set('mn_custom',custom);
+  $('#s-name').value=$('#s-url').value='';cache={};
+  $('#dlg').close();
+  if(l!==lang){lang=l;try{localStorage.setItem('mn_lang',lang)}catch(_){}applyI18n()}
+  drawSources();show(cat,true);
+};
+$('#refresh').onclick=()=>{loadSnap();cache={};loadMarkets();show(current,true)};
+
+/* ---- Défilement horizontal des articles (droite -> gauche) ---- */
+const feed=$('#feed');
+let auto=store.get('mn_auto',true)!==false, hover=false, acc=0, last=performance.now(), holdUntil=0;
+const SPEED=50; // px/s
+const setW=()=>{const e=feed.querySelector('.set');return e?e.offsetWidth:0};
+function marquee(t){
+  const dt=Math.min((t-last)/1000,0.1); last=t;
+  const w=setW();
+  if(auto && !hover && t>holdUntil && w>feed.clientWidth){
+    acc+=SPEED*dt;const px=Math.floor(acc);
+    if(px){acc-=px;feed.scrollLeft+=px}
+  }
+  if(w && feed.scrollLeft>=w) feed.scrollLeft-=w;
+  requestAnimationFrame(marquee);
+}
+function setAuto(on){auto=on;store.set('mn_auto',on);$('#auto').classList.toggle('on',on);$('#auto').setAttribute('aria-pressed',on)}
+function jump(dir){
+  const w=setW(); if(!w) return;
+  holdUntil=performance.now()+4000;
+  if(dir<0 && feed.scrollLeft<242) feed.scrollLeft+=w;
+  feed.scrollBy({left:dir*242,behavior:'smooth'});
+}
+$('#auto').onclick=()=>setAuto(!auto);
+$('#prev').onclick=()=>jump(-1);
+$('#next').onclick=()=>jump(1);
+feed.addEventListener('mouseenter',()=>hover=true);
+feed.addEventListener('mouseleave',()=>{hover=false;holdUntil=0});
+['wheel','touchstart','keydown'].forEach(ev=>feed.addEventListener(ev,()=>{holdUntil=performance.now()+4000},{passive:true}));
+/* glisser à la souris */
+let drag=null;
+feed.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button===0)drag={x:e.clientX,l:feed.scrollLeft,moved:false}});
+addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;if(Math.abs(dx)>4)drag.moved=true;if(drag.moved){let l=drag.l-dx;const w=setW();if(w){if(l<0){l+=w;drag.l+=w}else if(l>=w){l-=w;drag.l-=w}}feed.scrollLeft=l;feed.style.cursor='grabbing'}});
+let wasDrag=false;
+feed.addEventListener('click',ev=>{if(wasDrag)ev.preventDefault()},true);
+addEventListener('pointerup',()=>{if(drag&&drag.moved){holdUntil=performance.now()+4000;wasDrag=true;setTimeout(()=>wasDrag=false,50)}drag=null;feed.style.cursor=''});
+setAuto(auto);
+requestAnimationFrame(marquee);
+loadSnap();
+applyI18n();
+show(current);loadMarkets();
+setInterval(()=>{loadSnap();cache={};show(current,true)},10*60*1000);
+setInterval(loadMarkets,5*60*1000);
+</script>
+</body>
+</html>
