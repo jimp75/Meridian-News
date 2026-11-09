@@ -227,8 +227,8 @@ dialog .btn.primary{border-color:var(--acc);color:var(--acc-ink)}
 
 <script>
 /* ================= Langues / interface ================= */
-const LANGS = {en:'English', fr:'Français', pt:'Português', es:'Español'};
-const LOCALE = {en:'en-GB', fr:'fr-FR', pt:'pt-PT', es:'es-ES'};
+const LANGS = {en:'English', fr:'Français', pt:'Português'};
+const LOCALE = {en:'en-GB', fr:'fr-FR', pt:'pt-PT'};
 const CAT_IDS = ['world','france','portugal','eco','fe','ff','fp','porto','ol','lyonnes'];
 const FOOT = ['fe','ff','fp','porto','ol','lyonnes'];
 const I18N = {
@@ -258,16 +258,7 @@ const I18N = {
     articles:'artigos',srcs:'fontes',upd:'Atualizado',cache:'cache',updating:'a atualizar…',mk:'Mercados',mkLoad:'A carregar…',mkNo:'Indisponível (sem ligação ou rede bloqueada)',
     dOk:'Feed ativo',dKo:'Feed inacessível',dNo:'Não carregado',grp:'Futebol',
     cats:[['Mundo','Notícias internacionais'],['França','Notícias de França'],['Portugal','Notícias de Portugal'],['Economia','Economia e mercados'],['Europa','Futebol europeu'],['França','Futebol francês'],['Portugal','Futebol português'],['FC Porto','Notícias do FC Porto'],['OL','Notícias do Olympique Lyonnais'],['OL Lyonnes','OL Lyonnes (equipa feminina)']],
-    mkn:{gold:'Ouro',silver:'Prata',gas:'Gás natural'}},
-  es:{gNews:'Noticias',gEco:'Economía',gFoot:'Fútbol',copy:'Copiar fuentes para el sitio',copied:'Copiado ✓',shareHint:'Las fuentes añadidas se guardan en este navegador. Para guardarlas en el sitio (todos los dispositivos), cópialas y pégalas en sources.json en GitHub.',tag:'Edición mundial',autoScroll:'Desplazamiento auto',refresh:'Actualizar',add:'Añadir fuente',
-    srcTitle:'Fuentes',srcSub:'Meridian News agrega feeds RSS públicos. Los titulares y resúmenes pertenecen a sus editores; cada artículo enlaza al sitio original.',
-    quotes:'Cotizaciones:',gnote:'Algunas secciones usan',auto:'Actualización automática cada 10 min',lastUpd:'Última actualización',
-    dlgTitle:'Añadir una fuente',dlgSub:'Pega la dirección de un feed RSS o Atom.',fName:'Nombre',fUrl:'URL del feed',fCat:'Sección',fLang:'Idioma',close:'Cerrar',addBtn:'Añadir',mine:'Mis fuentes',remove:'Quitar',
-    err:'Indica un nombre y una URL que empiece por http:// o https://',empty:'No hay artículos disponibles ahora (feeds inaccesibles o sin conexión).<br>Prueba «Actualizar» o añade una fuente.',
-    articles:'artículos',srcs:'fuentes',upd:'Actualizado',cache:'caché',updating:'actualizando…',mk:'Mercados',mkLoad:'Cargando…',mkNo:'No disponible (sin conexión o red bloqueada)',
-    dOk:'Feed activo',dKo:'Feed inaccesible',dNo:'Sin cargar',grp:'Fútbol',
-    cats:[['Mundo','Actualidad internacional'],['Francia','Actualidad de Francia'],['Portugal','Actualidad de Portugal'],['Economía','Economía y mercados'],['Europa','Fútbol europeo'],['Francia','Fútbol francés'],['Portugal','Fútbol portugués'],['FC Porto','Noticias del FC Porto'],['OL','Noticias del Olympique de Lyon'],['OL Lyonnes','OL Lyonnes (equipo femenino)']],
-    mkn:{gold:'Oro',silver:'Plata',gas:'Gas natural'}}
+    mkn:{gold:'Ouro',silver:'Prata',gas:'Gás natural'}}
 };
 let lang = (()=>{try{const l=localStorage.getItem('mn_lang');if(l&&I18N[l])return l}catch(e){}
   const n=(navigator.language||'fr').slice(0,2);return I18N[n]?n:'fr'})();
@@ -278,7 +269,7 @@ const catTitle = id => I18N[lang].cats[catIdx(id)][1];
 const catFull = id => FOOT.includes(id) ? T('gFoot')+' · '+catLabel(id) : catLabel(id);
 
 /* ================= Sources ================= */
-const GN = {en:'hl=en-GB&gl=GB&ceid=GB:en', fr:'hl=fr&gl=FR&ceid=FR:fr', pt:'hl=pt-PT&gl=PT&ceid=PT:pt-150', es:'hl=es&gl=ES&ceid=ES:es'};
+const GN = {en:'hl=en-GB&gl=GB&ceid=GB:en', fr:'hl=fr&gl=FR&ceid=FR:fr', pt:'hl=pt-PT&gl=PT&ceid=PT:pt-150'};
 const S = (lang,cat,name,url,site)=>({lang,cat,name,url,site});
 const G = (lang,cat,name,q)=>({lang,cat,name:name+' (Google News)',url:`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&${GN[lang]}`,site:'https://news.google.com'});
 const DEFAULT_SOURCES = [
@@ -327,6 +318,7 @@ const DEFAULT_SOURCES = [
  S('pt','portugal','RTP Notícias – País','https://www.rtp.pt/noticias/rss/pais','https://www.rtp.pt/noticias/pais'),
  S('pt','portugal','Público','https://feeds.feedburner.com/PublicoRSS','https://www.publico.pt'),
  S('pt','portugal','Observador','https://observador.pt/feed/','https://observador.pt'),
+ S('pt','portugal','Notícias ao Minuto','https://www.noticiasaominuto.com/rss/ultima-hora','https://www.noticiasaominuto.com'),
  S('pt','eco','ECO','https://eco.sapo.pt/feed/','https://eco.sapo.pt'),
  S('pt','eco','Observador – Economia','https://observador.pt/seccao/economia/feed/','https://observador.pt/seccao/economia/'),
  S('pt','eco','Jornal de Negócios','https://www.jornaldenegocios.pt/rss','https://www.jornaldenegocios.pt'),
@@ -335,22 +327,6 @@ const DEFAULT_SOURCES = [
  G('pt','ff','Ligue 1','Ligue 1 futebol'),
  S('pt','fp','Record','https://www.record.pt/rss','https://www.record.pt'),
  S('pt','fp','Maisfutebol','https://maisfutebol.iol.pt/rss','https://maisfutebol.iol.pt'),
- /* ---------- Español ---------- */
- S('es','world','El País – Internacional','https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada','https://elpais.com/internacional/'),
- S('es','world','BBC Mundo','https://feeds.bbci.co.uk/mundo/rss.xml','https://www.bbc.com/mundo'),
- S('es','world','Euronews','https://es.euronews.com/rss','https://es.euronews.com'),
- G('es','france','Francia','Francia noticias'),
- S('es','france','RFI – Francia','https://www.rfi.fr/es/francia/rss','https://www.rfi.fr/es/'),
- G('es','portugal','Portugal','Portugal noticias'),
- S('es','portugal','Euronews – Portugal','https://es.euronews.com/rss?level=theme&name=news','https://es.euronews.com'),
- S('es','eco','El País – Economía','https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada','https://elpais.com/economia/'),
- S('es','eco','Expansión','https://e00-expansion.uecdn.es/rss/portada.xml','https://www.expansion.com'),
- S('es','eco','Cinco Días','https://cincodias.elpais.com/rss/cincodias/portada.xml','https://cincodias.elpais.com'),
- S('es','fe','Marca – Fútbol','https://e00-marca.uecdn.es/rss/futbol/primera-division.xml','https://www.marca.com/futbol.html'),
- S('es','fe','Mundo Deportivo','https://www.mundodeportivo.com/rss/futbol','https://www.mundodeportivo.com/futbol'),
- G('es','fe','Champions League','Champions League fútbol'),
- G('es','ff','Ligue 1','Ligue 1 fútbol'),
- G('es','fp','Primeira Liga','Primeira Liga Benfica Porto Sporting'),
  /* ---------- FC Porto ---------- */
  G('fr','porto','FC Porto','FC Porto'),
  G('fr','porto','FC Porto – actualité','FC Porto actualité Dragões'),
@@ -358,22 +334,49 @@ const DEFAULT_SOURCES = [
  G('en','porto','FC Porto – transfers','FC Porto transfer news'),
  G('pt','porto','FC Porto','FC Porto'),
  G('pt','porto','FC Porto – notícias','FC Porto notícias Dragões'),
- G('es','porto','FC Porto','FC Porto'),
- G('es','porto','FC Porto – noticias','FC Porto noticias fútbol'),
  /* ---------- OL (Olympique Lyonnais) ---------- */
  G('fr','ol','OL','Olympique Lyonnais OL'),
  G('fr','ol','OL – actualité','OL Lyon Ligue 1 actualité'),
  G('en','ol','OL','Olympique Lyonnais'),
  G('en','ol','OL – Ligue 1','Lyon OL Ligue 1 news'),
  G('pt','ol','OL','Olympique de Lyon'),
- G('es','ol','OL','Olympique de Lyon'),
  /* ---------- OL Lyonnes (féminines) ---------- */
  G('fr','lyonnes','OL Lyonnes','OL Lyonnes'),
  G('fr','lyonnes','OL Féminin – D1','Lyon féminines D1 Arkema'),
  G('en','lyonnes','OL Lyonnes','OL Lyonnes women'),
  G('en','lyonnes','Lyon Women','Olympique Lyonnais Féminin women Champions League'),
  G('pt','lyonnes','OL Lyonnes','OL Lyonnes futebol feminino'),
- G('es','lyonnes','OL Lyonnes','OL Lyonnes fútbol femenino')
+ /* ---------- FC Porto : plus de sources ---------- */
+ G('pt','porto','Record – FC Porto','FC Porto site:record.pt'),
+ G('pt','porto','O Jogo – FC Porto','FC Porto site:ojogo.pt'),
+ G('pt','porto','A Bola – FC Porto','FC Porto site:abola.pt'),
+ G('pt','porto','Maisfutebol – FC Porto','FC Porto site:maisfutebol.iol.pt'),
+ G('pt','porto','Renascença – FC Porto','FC Porto site:rr.pt'),
+ G('fr','porto',"L'Équipe – FC Porto",'FC Porto site:lequipe.fr'),
+ G('fr','porto','Foot Mercato – FC Porto','FC Porto site:footmercato.net'),
+ G('en','porto','BBC Sport – FC Porto','FC Porto site:bbc.com'),
+ G('en','porto','The Guardian – FC Porto','FC Porto site:theguardian.com'),
+ G('en','porto','Sky Sports – FC Porto','FC Porto site:skysports.com'),
+ /* ---------- OL : plus de sources ---------- */
+ S('fr','ol','Olympique & Lyonnais','https://www.olympique-et-lyonnais.com/feed','https://www.olympique-et-lyonnais.com'),
+ S('fr','ol','Ferveur Lyonnaise','https://www.ferveurlyonnaise.fr/feed','https://www.ferveurlyonnaise.fr'),
+ G('fr','ol',"L'Équipe – OL",'Olympique Lyonnais site:lequipe.fr'),
+ G('fr','ol','Le Progrès – OL','OL Lyon site:leprogres.fr'),
+ G('fr','ol','Lyon Mag – OL','OL Lyon site:lyonmag.com'),
+ G('fr','ol','Foot Mercato – OL','Olympique Lyonnais site:footmercato.net'),
+ G('en','ol','BBC Sport – Lyon','Olympique Lyonnais site:bbc.com'),
+ G('en','ol','The Guardian – Lyon','Olympique Lyonnais site:theguardian.com'),
+ G('pt','ol','Record – Lyon','Olympique Lyon site:record.pt'),
+ G('pt','ol','A Bola – Lyon','Olympique Lyon site:abola.pt'),
+ /* ---------- OL Lyonnes : plus de sources ---------- */
+ G('fr','lyonnes','Olympique & Lyonnais – Lyonnes','OL Lyonnes site:olympique-et-lyonnais.com'),
+ G('fr','lyonnes','Ferveur Lyonnaise – Lyonnes','OL Lyonnes site:ferveurlyonnaise.fr'),
+ G('fr','lyonnes',"L'Équipe – Lyonnes",'OL Lyonnes site:lequipe.fr'),
+ G('fr','lyonnes','Lyon Mag – Lyonnes','OL Lyonnes site:lyonmag.com'),
+ G('fr','lyonnes','Foot Mercato – Lyonnes','OL Lyonnes site:footmercato.net'),
+ G('en','lyonnes','BBC Sport – Lyon Women','Lyon women OL Lyonnes site:bbc.com'),
+ G('en','lyonnes','The Guardian – Lyon Women','Lyon women OL Lyonnes site:theguardian.com'),
+ G('pt','lyonnes','Record – Lyon feminino','Lyon feminino site:record.pt')
 ];
 const MARKETS = [
   /* Europe */ ['CAC 40','^FCHI'],['DAX','^GDAXI'],['Euro Stoxx 50','^STOXX50E'],['FTSE 100','^FTSE'],['IBEX 35','^IBEX'],['FTSE MIB','FTSE.MI'],['AEX','^AEX'],['PSI','PSI20.LS'],
@@ -576,7 +579,7 @@ function applyI18n(){
   document.documentElement.lang=lang;
   document.querySelectorAll('[data-i]').forEach(e=>e.textContent=T(e.dataset.i));
   $('#refresh').title=T('refresh');$('#add').title=T('add');
-  $('#s-name').placeholder={en:'e.g. The Times',fr:'Ex : Le Figaro',pt:'Ex.: Expresso',es:'Ej.: La Vanguardia'}[lang];
+  $('#s-name').placeholder={en:'e.g. The Times',fr:'Ex : Le Figaro',pt:'Ex.: Expresso'}[lang];
   $('#date').textContent=new Date().toLocaleDateString(LOCALE[lang],{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   $('#langs').innerHTML=Object.keys(LANGS).map(l=>`<button data-l="${l}" class="${l===lang?'on':''}" title="${LANGS[l]}" aria-pressed="${l===lang}">${l.toUpperCase()}</button>`).join('');
   buildMenu();
