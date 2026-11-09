@@ -287,7 +287,6 @@ const DEFAULT_SOURCES = [
  S('en','fe','Sky Sports – Football','https://www.skysports.com/rss/12040','https://www.skysports.com/football'),
  S('en','fe','The Guardian – Football','https://www.theguardian.com/football/rss','https://www.theguardian.com/football'),
  G('en','ff','Ligue 1','Ligue 1 football'),
- S('en','ff','The Guardian – Ligue 1','https://www.theguardian.com/football/ligue-1/rss','https://www.theguardian.com/football/ligue-1'),
  G('en','fp','Primeira Liga','Primeira Liga Benfica Porto Sporting'),
  S('en','fp','Portugal Resident – Sport','https://www.portugalresident.com/category/sport/feed/','https://www.portugalresident.com'),
  /* ---------- Français ---------- */
@@ -320,7 +319,7 @@ const DEFAULT_SOURCES = [
  S('pt','eco','Observador – Economia','https://observador.pt/seccao/economia/feed/','https://observador.pt/seccao/economia/'),
  S('pt','eco','Jornal de Negócios','https://www.jornaldenegocios.pt/rss','https://www.jornaldenegocios.pt'),
  G('pt','fe','Liga dos Campeões','Liga dos Campeões futebol'),
- S('pt','fe','A Bola','https://www.abola.pt/rss','https://www.abola.pt'),
+ S('pt','fe','A Bola','https://www.abola.pt/rss-articles.xml','https://www.abola.pt'),
  G('pt','ff','Ligue 1','Ligue 1 futebol'),
  S('pt','fp','Record','https://www.record.pt/rss','https://www.record.pt'),
  S('pt','fp','Maisfutebol','https://maisfutebol.iol.pt/rss','https://maisfutebol.iol.pt'),
@@ -384,8 +383,8 @@ const sources = ()=>{
 };
 
 /* Instantané préparé côté serveur (GitHub Actions) : évite les blocages CORS */
-let snapP=Promise.resolve(null);
-function loadSnap(){snapP=fetch('news.json?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null)}
+let snapP=Promise.resolve(null), snapAt=null;
+function loadSnap(){snapP=fetch('news.json?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null).then(j=>{snapAt=j&&j.updated?j.updated:null;return j})}
 async function fetchText(url, ms=9000){
   const snap=await snapP;
   if(snap&&snap.data&&snap.data[url]) return snap.data[url];
@@ -484,7 +483,8 @@ async function show(cat, force){
   const d=await loadCat(cat,force);
   if(current===cat && lang===myLang) render(d.items.length?d:stale);
   $('#refresh').classList.remove('spin');
-  $('#upd').textContent=T('lastUpd')+' '+hhmm(Date.now());
+  await snapP;
+  $('#upd').textContent=T('lastUpd')+' '+hhmm(Date.now())+' · news.json '+(snapAt?hhmm(snapAt)+' ('+ago(Date.parse(snapAt))+')':'✗');
 }
 
 /* ================= Bandeau boursier ================= */
