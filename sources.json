@@ -1,19 +1,19 @@
 [
   {
-    "name": "Google News",
-    "url": "https://news.google.com/home?hl=fr&gl=FR&ceid=FR:fr",
+    "name": "Google News – World",
+    "url": "https://news.google.com/rss/headlines/section/topic/WORLD?hl=en-GB&gl=GB&ceid=GB:en",
     "cat": "world",
     "lang": "en"
   },
   {
     "name": "A Bola",
-    "url": "http://www.abola.pt",
+    "url": "https://www.abola.pt/rss-articles.xml",
     "cat": "fp",
     "lang": "pt"
   },
   {
     "name": "Lyon Actu",
-    "url": "https://actu.fr/lyon/",
+    "url": "https://actu.fr/lyon/rss.xml",
     "cat": "france",
     "lang": "fr"
   }
