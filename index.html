@@ -61,13 +61,18 @@ button,select{font:inherit;cursor:pointer;color:inherit}
 .t .up{color:#4cd48a}.t .down{color:#ff7b72}
 
 nav{background:var(--paper);border-bottom:1px solid var(--line)}
-.nav-in{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;overflow-x:auto;scrollbar-width:none}
+.nav-in{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none}
 .nav-in::-webkit-scrollbar{display:none}
-.nav-in button{background:none;border:0;border-bottom:3px solid transparent;padding:14px 16px 11px;font:600 13px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--mute);white-space:nowrap;transition:.15s}
-.nav-in button:hover{color:var(--ink)}
-.nav-in button.on{color:var(--ink);border-bottom-color:var(--acc)}
-.nav-in .grp{align-self:center;font:700 10px var(--sans);letter-spacing:.2em;color:var(--acc);padding:0 4px 0 18px;margin-left:10px;border-left:1px solid var(--line);text-transform:uppercase}
-
+.ng{--gc:var(--acc);display:flex;flex-direction:column;padding:9px 18px 0;border-left:1px solid var(--line);flex:none}
+.ng:first-child{border-left:0;padding-left:0}
+.ng.news{--gc:#c0392b}.ng.eco{--gc:#b7791f}.ng.foot{--gc:#1f7a4d}
+@media(prefers-color-scheme:dark){.ng.news{--gc:#ff7b6e}.ng.eco{--gc:#e0a84a}.ng.foot{--gc:#4cd48a}}
+.ng-h{display:flex;align-items:center;gap:7px;font:800 10.5px var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--gc);padding:0 4px 3px}
+.ng-h::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--gc)}
+.ng-b{display:flex}
+.ng-b button{background:none;border:0;border-bottom:3px solid transparent;padding:6px 12px 10px;font:600 13px var(--sans);letter-spacing:.03em;color:var(--mute);white-space:nowrap;transition:.15s}
+.ng-b button:hover{color:var(--ink)}
+.ng-b button.on{color:var(--ink);border-bottom-color:var(--gc)}
 main{max-width:1120px;margin:0 auto;padding:28px 24px 48px;min-height:60vh}
 .head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:22px}
 .head h1{margin:0;font:700 26px var(--serif);letter-spacing:-.2px}
@@ -224,43 +229,44 @@ dialog .btn.primary{border-color:var(--acc);color:var(--acc-ink)}
 /* ================= Langues / interface ================= */
 const LANGS = {en:'English', fr:'Français', pt:'Português', es:'Español'};
 const LOCALE = {en:'en-GB', fr:'fr-FR', pt:'pt-PT', es:'es-ES'};
-const CAT_IDS = ['world','france','portugal','eco','fe','ff','fp'];
+const CAT_IDS = ['world','france','portugal','eco','fe','ff','fp','porto','ol','lyonnes'];
+const FOOT = ['fe','ff','fp','porto','ol','lyonnes'];
 const I18N = {
-  en:{copy:'Copy sources for the site',copied:'Copied ✓',shareHint:'Added sources are saved in this browser. To keep them on the site (all devices), copy them and paste into sources.json on GitHub.',tag:'World edition',autoScroll:'Auto-scroll',refresh:'Refresh',add:'Add a source',
+  en:{gNews:'News',gEco:'Economy',gFoot:'Football',copy:'Copy sources for the site',copied:'Copied ✓',shareHint:'Added sources are saved in this browser. To keep them on the site (all devices), copy them and paste into sources.json on GitHub.',tag:'World edition',autoScroll:'Auto-scroll',refresh:'Refresh',add:'Add a source',
     srcTitle:'Sources',srcSub:'Meridian News aggregates public RSS feeds. Headlines and summaries belong to their publishers; each article links to the original site.',
     quotes:'Market data:',gnote:'Some sections use',auto:'Auto-refresh every 10 min',lastUpd:'Last update',
     dlgTitle:'Add a source',dlgSub:'Paste the address of an RSS or Atom feed.',fName:'Name',fUrl:'Feed URL',fCat:'Section',fLang:'Language',close:'Close',addBtn:'Add',mine:'My sources',remove:'Remove',
     err:'Enter a name and a URL starting with http:// or https://',empty:'No articles available right now (feeds unreachable or offline).<br>Try “Refresh” or add a source.',
     articles:'articles',srcs:'sources',upd:'Updated',cache:'cached',updating:'updating…',mk:'Markets',mkLoad:'Loading…',mkNo:'Unavailable (offline or network blocked)',
     dOk:'Feed active',dKo:'Feed unreachable',dNo:'Not loaded',grp:'Football',
-    cats:[['World','International news'],['France','News from France'],['Portugal','News from Portugal'],['Economy','Economy & markets'],['Europe','European football'],['France','French football'],['Portugal','Portuguese football']],
+    cats:[['World','International news'],['France','News from France'],['Portugal','News from Portugal'],['Economy','Economy & markets'],['Europe','European football'],['France','French football'],['Portugal','Portuguese football'],['FC Porto','FC Porto news'],['OL','Olympique Lyonnais news'],['OL Lyonnes',"OL Lyonnes (women's team)"]],
     mkn:{gold:'Gold',silver:'Silver',gas:'Natural gas'}},
-  fr:{copy:'Copier les sources pour le site',copied:'Copié ✓',shareHint:"Les sources ajoutées sont gardées dans ce navigateur. Pour les enregistrer sur le site (tous vos appareils), copiez-les puis collez-les dans sources.json sur GitHub.",tag:'Édition mondiale',autoScroll:'Défilement auto',refresh:'Actualiser',add:'Ajouter une source',
+  fr:{gNews:'Actualités',gEco:'Économie',gFoot:'Football',copy:'Copier les sources pour le site',copied:'Copié ✓',shareHint:"Les sources ajoutées sont gardées dans ce navigateur. Pour les enregistrer sur le site (tous vos appareils), copiez-les puis collez-les dans sources.json sur GitHub.",tag:'Édition mondiale',autoScroll:'Défilement auto',refresh:'Actualiser',add:'Ajouter une source',
     srcTitle:'Sources',srcSub:"Meridian News agrège des flux RSS publics. Les titres et résumés appartiennent à leurs éditeurs ; chaque article renvoie vers le site d'origine.",
     quotes:'Cours :',gnote:'Certaines rubriques utilisent',auto:'Actualisation automatique toutes les 10 min',lastUpd:'Dernière mise à jour',
     dlgTitle:'Ajouter une source',dlgSub:"Collez l'adresse d'un flux RSS ou Atom.",fName:'Nom',fUrl:'URL du flux',fCat:'Rubrique',fLang:'Langue',close:'Fermer',addBtn:'Ajouter',mine:'Mes sources',remove:'Retirer',
     err:'Indiquez un nom et une URL commençant par http:// ou https://',empty:"Aucun article disponible pour le moment (flux inaccessibles ou hors ligne).<br>Essayez « Actualiser » ou ajoutez une source.",
     articles:'articles',srcs:'sources',upd:'Mis à jour',cache:'cache',updating:'actualisation…',mk:'Marchés',mkLoad:'Chargement…',mkNo:'Indisponibles (hors ligne ou réseau bloqué)',
     dOk:'Flux actif',dKo:'Flux inaccessible',dNo:'Non chargé',grp:'Football',
-    cats:[['Monde','Actualité internationale'],['France','Actualité en France'],['Portugal','Actualité au Portugal'],['Économie','Économie & marchés'],['Europe','Football européen'],['France','Football français'],['Portugal','Football portugais']],
+    cats:[['Monde','Actualité internationale'],['France','Actualité en France'],['Portugal','Actualité au Portugal'],['Économie','Économie & marchés'],['Europe','Football européen'],['France','Football français'],['Portugal','Football portugais'],['FC Porto','Actualité du FC Porto'],['OL',"Actualité de l'OL"],['OL Lyonnes','OL Lyonnes (féminines)']],
     mkn:{gold:'Or',silver:'Argent',gas:'Gaz naturel'}},
-  pt:{copy:'Copiar fontes para o site',copied:'Copiado ✓',shareHint:'As fontes adicionadas ficam guardadas neste navegador. Para as guardar no site (todos os dispositivos), copie-as e cole-as em sources.json no GitHub.',tag:'Edição mundial',autoScroll:'Rolagem automática',refresh:'Atualizar',add:'Adicionar fonte',
+  pt:{gNews:'Notícias',gEco:'Economia',gFoot:'Futebol',copy:'Copiar fontes para o site',copied:'Copiado ✓',shareHint:'As fontes adicionadas ficam guardadas neste navegador. Para as guardar no site (todos os dispositivos), copie-as e cole-as em sources.json no GitHub.',tag:'Edição mundial',autoScroll:'Rolagem automática',refresh:'Atualizar',add:'Adicionar fonte',
     srcTitle:'Fontes',srcSub:'O Meridian News agrega feeds RSS públicos. Os títulos e resumos pertencem aos respetivos editores; cada artigo remete para o site original.',
     quotes:'Cotações:',gnote:'Algumas secções usam',auto:'Atualização automática a cada 10 min',lastUpd:'Última atualização',
     dlgTitle:'Adicionar uma fonte',dlgSub:'Cole o endereço de um feed RSS ou Atom.',fName:'Nome',fUrl:'URL do feed',fCat:'Secção',fLang:'Idioma',close:'Fechar',addBtn:'Adicionar',mine:'As minhas fontes',remove:'Remover',
     err:'Indique um nome e um URL que comece por http:// ou https://',empty:'Nenhum artigo disponível de momento (feeds inacessíveis ou sem ligação).<br>Tente «Atualizar» ou adicione uma fonte.',
     articles:'artigos',srcs:'fontes',upd:'Atualizado',cache:'cache',updating:'a atualizar…',mk:'Mercados',mkLoad:'A carregar…',mkNo:'Indisponível (sem ligação ou rede bloqueada)',
     dOk:'Feed ativo',dKo:'Feed inacessível',dNo:'Não carregado',grp:'Futebol',
-    cats:[['Mundo','Notícias internacionais'],['França','Notícias de França'],['Portugal','Notícias de Portugal'],['Economia','Economia e mercados'],['Europa','Futebol europeu'],['França','Futebol francês'],['Portugal','Futebol português']],
+    cats:[['Mundo','Notícias internacionais'],['França','Notícias de França'],['Portugal','Notícias de Portugal'],['Economia','Economia e mercados'],['Europa','Futebol europeu'],['França','Futebol francês'],['Portugal','Futebol português'],['FC Porto','Notícias do FC Porto'],['OL','Notícias do Olympique Lyonnais'],['OL Lyonnes','OL Lyonnes (equipa feminina)']],
     mkn:{gold:'Ouro',silver:'Prata',gas:'Gás natural'}},
-  es:{copy:'Copiar fuentes para el sitio',copied:'Copiado ✓',shareHint:'Las fuentes añadidas se guardan en este navegador. Para guardarlas en el sitio (todos los dispositivos), cópialas y pégalas en sources.json en GitHub.',tag:'Edición mundial',autoScroll:'Desplazamiento auto',refresh:'Actualizar',add:'Añadir fuente',
+  es:{gNews:'Noticias',gEco:'Economía',gFoot:'Fútbol',copy:'Copiar fuentes para el sitio',copied:'Copiado ✓',shareHint:'Las fuentes añadidas se guardan en este navegador. Para guardarlas en el sitio (todos los dispositivos), cópialas y pégalas en sources.json en GitHub.',tag:'Edición mundial',autoScroll:'Desplazamiento auto',refresh:'Actualizar',add:'Añadir fuente',
     srcTitle:'Fuentes',srcSub:'Meridian News agrega feeds RSS públicos. Los titulares y resúmenes pertenecen a sus editores; cada artículo enlaza al sitio original.',
     quotes:'Cotizaciones:',gnote:'Algunas secciones usan',auto:'Actualización automática cada 10 min',lastUpd:'Última actualización',
     dlgTitle:'Añadir una fuente',dlgSub:'Pega la dirección de un feed RSS o Atom.',fName:'Nombre',fUrl:'URL del feed',fCat:'Sección',fLang:'Idioma',close:'Cerrar',addBtn:'Añadir',mine:'Mis fuentes',remove:'Quitar',
     err:'Indica un nombre y una URL que empiece por http:// o https://',empty:'No hay artículos disponibles ahora (feeds inaccesibles o sin conexión).<br>Prueba «Actualizar» o añade una fuente.',
     articles:'artículos',srcs:'fuentes',upd:'Actualizado',cache:'caché',updating:'actualizando…',mk:'Mercados',mkLoad:'Cargando…',mkNo:'No disponible (sin conexión o red bloqueada)',
     dOk:'Feed activo',dKo:'Feed inaccesible',dNo:'Sin cargar',grp:'Fútbol',
-    cats:[['Mundo','Actualidad internacional'],['Francia','Actualidad de Francia'],['Portugal','Actualidad de Portugal'],['Economía','Economía y mercados'],['Europa','Fútbol europeo'],['Francia','Fútbol francés'],['Portugal','Fútbol portugués']],
+    cats:[['Mundo','Actualidad internacional'],['Francia','Actualidad de Francia'],['Portugal','Actualidad de Portugal'],['Economía','Economía y mercados'],['Europa','Fútbol europeo'],['Francia','Fútbol francés'],['Portugal','Fútbol portugués'],['FC Porto','Noticias del FC Porto'],['OL','Noticias del Olympique de Lyon'],['OL Lyonnes','OL Lyonnes (equipo femenino)']],
     mkn:{gold:'Oro',silver:'Plata',gas:'Gas natural'}}
 };
 let lang = (()=>{try{const l=localStorage.getItem('mn_lang');if(l&&I18N[l])return l}catch(e){}
@@ -269,7 +275,7 @@ const T = k => I18N[lang][k];
 const catIdx = id => CAT_IDS.indexOf(id);
 const catLabel = id => I18N[lang].cats[catIdx(id)][0];
 const catTitle = id => I18N[lang].cats[catIdx(id)][1];
-const catFull = id => catIdx(id)>=4 ? T('grp')+' · '+catLabel(id) : catLabel(id);
+const catFull = id => FOOT.includes(id) ? T('gFoot')+' · '+catLabel(id) : catLabel(id);
 
 /* ================= Sources ================= */
 const GN = {en:'hl=en-GB&gl=GB&ceid=GB:en', fr:'hl=fr&gl=FR&ceid=FR:fr', pt:'hl=pt-PT&gl=PT&ceid=PT:pt-150', es:'hl=es&gl=ES&ceid=ES:es'};
@@ -344,7 +350,30 @@ const DEFAULT_SOURCES = [
  S('es','fe','Mundo Deportivo','https://www.mundodeportivo.com/rss/futbol','https://www.mundodeportivo.com/futbol'),
  G('es','fe','Champions League','Champions League fútbol'),
  G('es','ff','Ligue 1','Ligue 1 fútbol'),
- G('es','fp','Primeira Liga','Primeira Liga Benfica Porto Sporting')
+ G('es','fp','Primeira Liga','Primeira Liga Benfica Porto Sporting'),
+ /* ---------- FC Porto ---------- */
+ G('fr','porto','FC Porto','FC Porto'),
+ G('fr','porto','FC Porto – actualité','FC Porto actualité Dragões'),
+ G('en','porto','FC Porto','FC Porto'),
+ G('en','porto','FC Porto – transfers','FC Porto transfer news'),
+ G('pt','porto','FC Porto','FC Porto'),
+ G('pt','porto','FC Porto – notícias','FC Porto notícias Dragões'),
+ G('es','porto','FC Porto','FC Porto'),
+ G('es','porto','FC Porto – noticias','FC Porto noticias fútbol'),
+ /* ---------- OL (Olympique Lyonnais) ---------- */
+ G('fr','ol','OL','Olympique Lyonnais OL'),
+ G('fr','ol','OL – actualité','OL Lyon Ligue 1 actualité'),
+ G('en','ol','OL','Olympique Lyonnais'),
+ G('en','ol','OL – Ligue 1','Lyon OL Ligue 1 news'),
+ G('pt','ol','OL','Olympique de Lyon'),
+ G('es','ol','OL','Olympique de Lyon'),
+ /* ---------- OL Lyonnes (féminines) ---------- */
+ G('fr','lyonnes','OL Lyonnes','OL Lyonnes'),
+ G('fr','lyonnes','OL Féminin – D1','Lyon féminines D1 Arkema'),
+ G('en','lyonnes','OL Lyonnes','OL Lyonnes women'),
+ G('en','lyonnes','Lyon Women','Olympique Lyonnais Féminin women Champions League'),
+ G('pt','lyonnes','OL Lyonnes','OL Lyonnes futebol feminino'),
+ G('es','lyonnes','OL Lyonnes','OL Lyonnes fútbol femenino')
 ];
 const MARKETS = [
   /* Europe */ ['CAC 40','^FCHI'],['DAX','^GDAXI'],['Euro Stoxx 50','^STOXX50E'],['FTSE 100','^FTSE'],['IBEX 35','^IBEX'],['FTSE MIB','FTSE.MI'],['AEX','^AEX'],['PSI','PSI20.LS'],
@@ -556,13 +585,14 @@ function applyI18n(){
   $('#s-lang').value=cur;
   drawSources();drawTicker();
 }
+const GROUPS=[
+  {k:'news',gk:'gNews',cats:['world','france','portugal']},
+  {k:'eco', gk:'gEco', cats:['eco']},
+  {k:'foot',gk:'gFoot',cats:['fe','ff','fp','porto','ol','lyonnes']}
+];
 function buildMenu(){
-  let html='';
-  CAT_IDS.forEach((id,i)=>{
-    if(i===4) html+=`<span class="grp">${esc(T('grp'))}</span>`;
-    html+=`<button data-id="${id}" class="${id===current?'on':''}">${esc(catLabel(id))}</button>`;
-  });
-  $('#menu').innerHTML=html;
+  $('#menu').innerHTML=GROUPS.map(g=>`<div class="ng ${g.k}"><div class="ng-h">${esc(T(g.gk))}</div><div class="ng-b">`+
+    g.cats.map(id=>`<button data-id="${id}" class="${id===current?'on':''}">${esc(catLabel(id))}</button>`).join('')+`</div></div>`).join('');
   const c=$('#s-cat').value;
   $('#s-cat').innerHTML=CAT_IDS.map(id=>`<option value="${id}">${esc(catFull(id))}</option>`).join('');
   if(c) $('#s-cat').value=c;
