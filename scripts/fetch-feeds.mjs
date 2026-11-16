@@ -17,11 +17,7 @@ vm.runInContext(html.slice(a, b).replace(/\bconst\b/g, 'var'), ctx);
 
 const urls = new Set();
 for (const s of ctx.DEFAULT_SOURCES) urls.add(s.url);
-for (const [, sym] of ctx.MARKETS) {
-  urls.add('https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(sym) + '?interval=1d&range=5d');
-  const id = ctx.STOOQ[sym];
-  if (id) urls.add('https://stooq.com/q/l/?s=' + encodeURIComponent(id) + '&f=sd2t2ohlc&h&e=csv');
-}
+for (const u of ctx.MARKET_URLS) urls.add(u);
 
 // Sources ajoutées par l'utilisateur et enregistrées dans sources.json
 if (fs.existsSync('sources.json')) {
