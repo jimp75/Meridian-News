@@ -117,6 +117,20 @@ main{max-width:1120px;margin:0 auto;padding:28px 24px 48px;min-height:60vh}
 .skel{height:92px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,transparent,var(--line2),transparent);background-size:200% 100%;animation:sk 1.4s infinite}
 @keyframes sk{from{background-position:200% 0}to{background-position:-200% 0}}
 
+[hidden]{display:none!important}
+.ng.scores{--gc:#2b6cb0}
+@media(prefers-color-scheme:dark){.ng.scores{--gc:#63b3ed}}
+.sc-day{font:700 12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:22px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.sc-day:first-child{margin-top:0}
+.sc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.sc{display:block;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:10px 14px;text-decoration:none;transition:border-color .15s}
+a.sc:hover{border-color:var(--acc)}
+.sc .st{display:flex;justify-content:space-between;font:700 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
+.sc .st.live{color:var(--down)}
+.sc .tm{display:flex;align-items:center;gap:9px;padding:3px 0;font:600 14.5px var(--sans)}
+.sc .tm img{width:22px;height:22px;object-fit:contain;flex:none}
+.sc .tm b{margin-left:auto;font:700 16px var(--mono)}
+.sc .tm.l{color:var(--mute);font-weight:500}
 footer{background:var(--navy);color:#aab3c2;margin-top:20px}
 .foot-in{max-width:1120px;margin:0 auto;padding:34px 24px 26px}
 footer h4{margin:0 0 4px;font:700 11px var(--sans);letter-spacing:.2em;text-transform:uppercase;color:#fff}
@@ -190,6 +204,7 @@ dialog .btn.primary{border-color:var(--acc);color:var(--acc-ink)}
     <button class="btn on" id="auto" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span data-i="autoScroll" style="letter-spacing:.04em"></span></button>
   </div>
   <div id="feed" class="strip"></div>
+  <div id="scores" hidden></div>
 </main>
 
 <footer>
@@ -198,7 +213,7 @@ dialog .btn.primary{border-color:var(--acc);color:var(--acc-ink)}
     <p class="sub" data-i="srcSub"></p>
     <div class="src-grid" id="sources"></div>
     <div class="legal">
-      <span><span data-i="quotes"></span> <a href="https://finance.yahoo.com" target="_blank" rel="noopener">Yahoo Finance</a> / <a href="https://stooq.com" target="_blank" rel="noopener">Stooq</a> / <a href="https://www.coingecko.com" target="_blank" rel="noopener">CoinGecko</a>. <span data-i="gnote"></span> <a href="https://news.google.com" target="_blank" rel="noopener">Google News</a>.</span>
+      <span><span data-i="quotes"></span> <a href="https://finance.yahoo.com" target="_blank" rel="noopener">Yahoo Finance</a> / <a href="https://stooq.com" target="_blank" rel="noopener">Stooq</a>. <span data-i="gnote"></span> <a href="https://news.google.com" target="_blank" rel="noopener">Google News</a>. Scores: <a href="https://www.espn.com/soccer/" target="_blank" rel="noopener">ESPN</a>.</span>
       <span><span data-i="auto"></span> · <span id="upd"></span></span>
     </div>
     <div class="credit">© 2026 by PJ</div>
@@ -229,8 +244,8 @@ dialog .btn.primary{border-color:var(--acc);color:var(--acc-ink)}
 /* ================= Langues / interface ================= */
 const LANGS = {en:'English', fr:'Français', pt:'Português'};
 const LOCALE = {en:'en-GB', fr:'fr-FR', pt:'pt-PT'};
-const CAT_IDS = ['world','france','portugal','eco','fe','ff','fp'];
-const FOOT = ['fe','ff','fp'];
+const CAT_IDS = ['world','france','portugal','eco','fe','ff','fp','porto','ol','lyonnes','stocks'];
+const FOOT = ['fe','ff','fp','porto','ol','lyonnes'];
 const I18N = {
   en:{gNews:'News',gEco:'Economy',gFoot:'Football',copy:'Copy sources for the site',copied:'Copied ✓',shareHint:'Added sources are saved in this browser. To keep them on the site (all devices), copy them and paste into sources.json on GitHub.',tag:'World edition',autoScroll:'Auto-scroll',refresh:'Refresh',add:'Add a source',
     srcTitle:'Sources',srcSub:'Meridian News aggregates public RSS feeds. Headlines and summaries belong to their publishers; each article links to the original site.',
@@ -238,27 +253,27 @@ const I18N = {
     dlgTitle:'Add a source',dlgSub:'Paste the address of an RSS or Atom feed.',fName:'Name',fUrl:'Feed URL',fCat:'Section',fLang:'Language',close:'Close',addBtn:'Add',mine:'My sources',remove:'Remove',
     err:'Enter a name and a URL starting with http:// or https://',empty:'No articles available right now (feeds unreachable or offline).<br>Try “Refresh” or add a source.',
     articles:'articles',srcs:'sources',upd:'Updated',cache:'cached',updating:'updating…',mk:'Markets',mkLoad:'Loading…',mkNo:'Unavailable (offline or network blocked)',
-    dOk:'Feed active',dKo:'Feed unreachable',dNo:'Not loaded',grp:'Football',
-    cats:[['World','International news'],['France','News from France'],['Portugal','News from Portugal'],['Economy','Economy & markets'],['Europe','European football'],['France','French football'],['Portugal','Portuguese football']],
-    mkn:{gold:'Gold',silver:'Silver',gas:'Natural gas',copper:'Copper'}},
+    gSc:'Scores',sc_pt:'Liga Portugal',sc_fr:'Ligue 1',ft:'FT',scErr:'Scores unavailable right now.',scNone:'No matches in this period.',dOk:'Feed active',dKo:'Feed unreachable',dNo:'Not loaded',grp:'Football',
+    cats:[['World','International news'],['France','News from France'],['Portugal','News from Portugal'],['Economy','Economy & markets'],['Europe','European football'],['France','French football'],['Portugal','Portuguese football'],['FC Porto','FC Porto news'],['OL','Olympique Lyonnais news'],['OL Lyonnes',"OL Lyonnes (women's team)"],['Stocks','Stock markets & Bourse']],
+    mkn:{gold:'Gold',silver:'Silver',gas:'Natural gas'}},
   fr:{gNews:'Actualités',gEco:'Économie',gFoot:'Football',copy:'Copier les sources pour le site',copied:'Copié ✓',shareHint:"Les sources ajoutées sont gardées dans ce navigateur. Pour les enregistrer sur le site (tous vos appareils), copiez-les puis collez-les dans sources.json sur GitHub.",tag:'Édition mondiale',autoScroll:'Défilement auto',refresh:'Actualiser',add:'Ajouter une source',
     srcTitle:'Sources',srcSub:"Meridian News agrège des flux RSS publics. Les titres et résumés appartiennent à leurs éditeurs ; chaque article renvoie vers le site d'origine.",
     quotes:'Cours :',gnote:'Certaines rubriques utilisent',auto:'Actualisation automatique toutes les 10 min',lastUpd:'Dernière mise à jour',
     dlgTitle:'Ajouter une source',dlgSub:"Collez l'adresse d'un flux RSS ou Atom.",fName:'Nom',fUrl:'URL du flux',fCat:'Rubrique',fLang:'Langue',close:'Fermer',addBtn:'Ajouter',mine:'Mes sources',remove:'Retirer',
     err:'Indiquez un nom et une URL commençant par http:// ou https://',empty:"Aucun article disponible pour le moment (flux inaccessibles ou hors ligne).<br>Essayez « Actualiser » ou ajoutez une source.",
     articles:'articles',srcs:'sources',upd:'Mis à jour',cache:'cache',updating:'actualisation…',mk:'Marchés',mkLoad:'Chargement…',mkNo:'Indisponibles (hors ligne ou réseau bloqué)',
-    dOk:'Flux actif',dKo:'Flux inaccessible',dNo:'Non chargé',grp:'Football',
-    cats:[['Monde','Actualité internationale'],['France','Actualité en France'],['Portugal','Actualité au Portugal'],['Économie','Économie & marchés'],['Europe','Football européen'],['France','Football français'],['Portugal','Football portugais']],
-    mkn:{gold:'Or',silver:'Argent',gas:'Gaz naturel',copper:'Cuivre'}},
+    gSc:'Scores',sc_pt:'Liga Portugal',sc_fr:'Ligue 1',ft:'Terminé',scErr:'Scores indisponibles pour le moment.',scNone:'Aucun match sur cette période.',dOk:'Flux actif',dKo:'Flux inaccessible',dNo:'Non chargé',grp:'Football',
+    cats:[['Monde','Actualité internationale'],['France','Actualité en France'],['Portugal','Actualité au Portugal'],['Économie','Économie & marchés'],['Europe','Football européen'],['France','Football français'],['Portugal','Football portugais'],['FC Porto','Actualité du FC Porto'],['OL',"Actualité de l'OL"],['OL Lyonnes','OL Lyonnes (féminines)'],['Bourse','Bourse & marchés actions']],
+    mkn:{gold:'Or',silver:'Argent',gas:'Gaz naturel'}},
   pt:{gNews:'Notícias',gEco:'Economia',gFoot:'Futebol',copy:'Copiar fontes para o site',copied:'Copiado ✓',shareHint:'As fontes adicionadas ficam guardadas neste navegador. Para as guardar no site (todos os dispositivos), copie-as e cole-as em sources.json no GitHub.',tag:'Edição mundial',autoScroll:'Rolagem automática',refresh:'Atualizar',add:'Adicionar fonte',
     srcTitle:'Fontes',srcSub:'O Meridian News agrega feeds RSS públicos. Os títulos e resumos pertencem aos respetivos editores; cada artigo remete para o site original.',
     quotes:'Cotações:',gnote:'Algumas secções usam',auto:'Atualização automática a cada 10 min',lastUpd:'Última atualização',
     dlgTitle:'Adicionar uma fonte',dlgSub:'Cole o endereço de um feed RSS ou Atom.',fName:'Nome',fUrl:'URL do feed',fCat:'Secção',fLang:'Idioma',close:'Fechar',addBtn:'Adicionar',mine:'As minhas fontes',remove:'Remover',
     err:'Indique um nome e um URL que comece por http:// ou https://',empty:'Nenhum artigo disponível de momento (feeds inacessíveis ou sem ligação).<br>Tente «Atualizar» ou adicione uma fonte.',
     articles:'artigos',srcs:'fontes',upd:'Atualizado',cache:'cache',updating:'a atualizar…',mk:'Mercados',mkLoad:'A carregar…',mkNo:'Indisponível (sem ligação ou rede bloqueada)',
-    dOk:'Feed ativo',dKo:'Feed inacessível',dNo:'Não carregado',grp:'Futebol',
-    cats:[['Mundo','Notícias internacionais'],['França','Notícias de França'],['Portugal','Notícias de Portugal'],['Economia','Economia e mercados'],['Europa','Futebol europeu'],['França','Futebol francês'],['Portugal','Futebol português']],
-    mkn:{gold:'Ouro',silver:'Prata',gas:'Gás natural',copper:'Cobre'}}
+    gSc:'Resultados',sc_pt:'Liga Portugal',sc_fr:'Ligue 1',ft:'Final',scErr:'Resultados indisponíveis de momento.',scNone:'Sem jogos neste período.',dOk:'Feed ativo',dKo:'Feed inacessível',dNo:'Não carregado',grp:'Futebol',
+    cats:[['Mundo','Notícias internacionais'],['França','Notícias de França'],['Portugal','Notícias de Portugal'],['Economia','Economia e mercados'],['Europa','Futebol europeu'],['França','Futebol francês'],['Portugal','Futebol português'],['FC Porto','Notícias do FC Porto'],['OL','Notícias do Olympique Lyonnais'],['OL Lyonnes','OL Lyonnes (equipa feminina)'],['Bolsa','Bolsa e mercados de ações']],
+    mkn:{gold:'Ouro',silver:'Prata',gas:'Gás natural'}}
 };
 let lang = (()=>{try{const l=localStorage.getItem('mn_lang');if(l&&I18N[l])return l}catch(e){}
   const n=(navigator.language||'fr').slice(0,2);return I18N[n]?n:'fr'})();
@@ -326,29 +341,82 @@ const DEFAULT_SOURCES = [
  S('pt','fe','A Bola','https://www.abola.pt/rss-articles.xml','https://www.abola.pt'),
  G('pt','ff','Ligue 1','Ligue 1 futebol'),
  S('pt','fp','Record','https://www.record.pt/rss','https://www.record.pt'),
- S('pt','fp','Maisfutebol','https://maisfutebol.iol.pt/rss','https://maisfutebol.iol.pt')
+ S('pt','fp','Maisfutebol','https://maisfutebol.iol.pt/rss','https://maisfutebol.iol.pt'),
+ /* ---------- FC Porto ---------- */
+ G('fr','porto','FC Porto','FC Porto'),
+ G('fr','porto','FC Porto – actualité','FC Porto actualité Dragões'),
+ G('en','porto','FC Porto','FC Porto'),
+ G('en','porto','FC Porto – transfers','FC Porto transfer news'),
+ G('pt','porto','FC Porto','FC Porto'),
+ G('pt','porto','FC Porto – notícias','FC Porto notícias Dragões'),
+ /* ---------- OL (Olympique Lyonnais) ---------- */
+ G('fr','ol','OL','Olympique Lyonnais OL'),
+ G('fr','ol','OL – actualité','OL Lyon Ligue 1 actualité'),
+ G('en','ol','OL','Olympique Lyonnais'),
+ G('en','ol','OL – Ligue 1','Lyon OL Ligue 1 news'),
+ G('pt','ol','OL','Olympique de Lyon'),
+ /* ---------- OL Lyonnes (féminines) ---------- */
+ G('fr','lyonnes','OL Lyonnes','OL Lyonnes'),
+ G('fr','lyonnes','OL Féminin – D1','Lyon féminines D1 Arkema'),
+ G('en','lyonnes','OL Lyonnes','OL Lyonnes women'),
+ G('en','lyonnes','Lyon Women','Olympique Lyonnais Féminin women Champions League'),
+ G('pt','lyonnes','OL Lyonnes','OL Lyonnes futebol feminino'),
+ /* ---------- FC Porto : plus de sources ---------- */
+ G('pt','porto','Record – FC Porto','FC Porto site:record.pt'),
+ G('pt','porto','O Jogo – FC Porto','FC Porto site:ojogo.pt'),
+ G('pt','porto','A Bola – FC Porto','FC Porto site:abola.pt'),
+ G('pt','porto','Maisfutebol – FC Porto','FC Porto site:maisfutebol.iol.pt'),
+ G('pt','porto','Renascença – FC Porto','FC Porto site:rr.pt'),
+ G('fr','porto',"L'Équipe – FC Porto",'FC Porto site:lequipe.fr'),
+ G('fr','porto','Foot Mercato – FC Porto','FC Porto site:footmercato.net'),
+ G('en','porto','BBC Sport – FC Porto','FC Porto site:bbc.com'),
+ G('en','porto','The Guardian – FC Porto','FC Porto site:theguardian.com'),
+ G('en','porto','Sky Sports – FC Porto','FC Porto site:skysports.com'),
+ /* ---------- OL : plus de sources ---------- */
+ S('fr','ol','Olympique & Lyonnais','https://www.olympique-et-lyonnais.com/feed','https://www.olympique-et-lyonnais.com'),
+ S('fr','ol','Ferveur Lyonnaise','https://www.ferveurlyonnaise.fr/feed','https://www.ferveurlyonnaise.fr'),
+ G('fr','ol',"L'Équipe – OL",'Olympique Lyonnais site:lequipe.fr'),
+ G('fr','ol','Le Progrès – OL','OL Lyon site:leprogres.fr'),
+ G('fr','ol','Lyon Mag – OL','OL Lyon site:lyonmag.com'),
+ G('fr','ol','Foot Mercato – OL','Olympique Lyonnais site:footmercato.net'),
+ G('en','ol','BBC Sport – Lyon','Olympique Lyonnais site:bbc.com'),
+ G('en','ol','The Guardian – Lyon','Olympique Lyonnais site:theguardian.com'),
+ G('pt','ol','Record – Lyon','Olympique Lyon site:record.pt'),
+ G('pt','ol','A Bola – Lyon','Olympique Lyon site:abola.pt'),
+ /* ---------- OL Lyonnes : plus de sources ---------- */
+ G('fr','lyonnes','Olympique & Lyonnais – Lyonnes','OL Lyonnes site:olympique-et-lyonnais.com'),
+ G('fr','lyonnes','Ferveur Lyonnaise – Lyonnes','OL Lyonnes site:ferveurlyonnaise.fr'),
+ G('fr','lyonnes',"L'Équipe – Lyonnes",'OL Lyonnes site:lequipe.fr'),
+ G('fr','lyonnes','Lyon Mag – Lyonnes','OL Lyonnes site:lyonmag.com'),
+ G('fr','lyonnes','Foot Mercato – Lyonnes','OL Lyonnes site:footmercato.net'),
+ G('en','lyonnes','BBC Sport – Lyon Women','Lyon women OL Lyonnes site:bbc.com'),
+ G('en','lyonnes','The Guardian – Lyon Women','Lyon women OL Lyonnes site:theguardian.com'),
+ G('pt','lyonnes','Record – Lyon feminino','Lyon feminino site:record.pt'),
+ /* ---------- Bourse / Bolsa / Stocks ---------- */
+ G('fr','stocks','CAC 40 – Bourse de Paris','CAC 40 Bourse de Paris'),
+ G('fr','stocks','Boursorama','bourse site:boursorama.com'),
+ G('fr','stocks','Zonebourse','bourse site:zonebourse.com'),
+ G('fr','stocks','Les Echos – Bourse','bourse site:lesechos.fr'),
+ G('fr','stocks','BFM Bourse','bourse site:bfmtv.com'),
+ G('pt','stocks','PSI – Bolsa de Lisboa','PSI bolsa Lisboa'),
+ G('pt','stocks','Jornal de Negócios – Bolsa','bolsa site:jornaldenegocios.pt'),
+ G('pt','stocks','ECO – Mercados','bolsa site:eco.sapo.pt'),
+ G('pt','stocks','Expresso – Bolsa','bolsa site:expresso.pt'),
+ G('en','stocks','European stock markets','European stock markets'),
+ G('en','stocks','Euronext – Paris & Lisbon','Euronext CAC 40 PSI')
 ];
 const MARKETS = [
-  /* Europe */ ['CAC 40','^FCHI'],['DAX','^GDAXI'],['Euro Stoxx 50','^STOXX50E'],['FTSE 100','^FTSE'],['IBEX 35','^IBEX'],['FTSE MIB','FTSE.MI'],['AEX','^AEX'],['PSI','PSI20.LS'],['SMI','^SSMI'],['BEL 20','^BFX'],['OMX 30','^OMX'],['ATX','^ATX'],
-  /* USA / Amériques */ ['S&P 500','^GSPC'],['Nasdaq','^IXIC'],['Dow Jones','^DJI'],['Russell 2000','^RUT'],['VIX','^VIX'],['TSX','^GSPTSE'],['Bovespa','^BVSP'],
-  /* Asie / Océanie */ ['Nikkei 225','^N225'],['Hang Seng','^HSI'],['Shanghai','000001.SS'],['KOSPI','^KS11'],['Taiwan','^TWII'],['Sensex','^BSESN'],['Nifty 50','^NSEI'],['ASX 200','^AXJO'],
-  /* Devises */ ['EUR/USD','EURUSD=X'],['EUR/GBP','EURGBP=X'],['USD/JPY','JPY=X'],['EUR/CHF','EURCHF=X'],['GBP/USD','GBPUSD=X'],['EUR/JPY','EURJPY=X'],
-  /* Crypto */ ['Bitcoin','BTC-USD'],['Ethereum','ETH-USD'],['Solana','SOL-USD'],['XRP','XRP-USD'],
-  /* Matières */ ['{gold}','GC=F'],['{silver}','SI=F'],['{copper}','HG=F'],['Brent','BZ=F'],['WTI','CL=F'],['{gas}','NG=F'],
-  /* Valeurs FR */ ['TotalEnergies','TTE.PA'],['LVMH','MC.PA'],['Airbus','AIR.PA'],['Sanofi','SAN.PA'],['Air Liquide','AI.PA'],['BNP Paribas','BNP.PA'],['Schneider','SU.PA'],['Hermès','RMS.PA'],['STMicro','STMPA.PA'],
-  /* Valeurs PT */ ['EDP','EDP.LS'],['Galp','GALP.LS'],['Jerónimo Martins','JMT.LS'],['BCP','BCP.LS'],['Sonae','SON.LS'],['Navigator','NVG.LS'],['REN','RENE.LS'],
-  /* Valeurs EU */ ['SAP','SAP.DE'],['Siemens','SIE.DE'],['ASML','ASML.AS'],['BASF','BAS.DE'],['Merck KGaA','MRK.DE'],['Umicore','UMI.BR'],
-  /* Valeurs US */ ['Apple','AAPL'],['Microsoft','MSFT'],['Nvidia','NVDA'],['Tesla','TSLA'],['Amazon','AMZN'],['Alphabet','GOOGL'],['Meta','META'],['DuPont','DD'],['Dow','DOW'],['Entegris','ENTG']
+  /* Europe */ ['CAC 40','^FCHI'],['DAX','^GDAXI'],['Euro Stoxx 50','^STOXX50E'],['FTSE 100','^FTSE'],['IBEX 35','^IBEX'],['FTSE MIB','FTSE.MI'],['AEX','^AEX'],['PSI','PSI20.LS'],
+  /* USA */ ['S&P 500','^GSPC'],['Nasdaq','^IXIC'],['Dow Jones','^DJI'],['Russell 2000','^RUT'],['VIX','^VIX'],
+  /* Asie */ ['Nikkei 225','^N225'],['Hang Seng','^HSI'],['Shanghai','000001.SS'],
+  /* Devises */ ['EUR/USD','EURUSD=X'],['EUR/GBP','EURGBP=X'],['USD/JPY','JPY=X'],['EUR/CHF','EURCHF=X'],
+  /* Crypto */ ['Bitcoin','BTC-USD'],['Ethereum','ETH-USD'],
+  /* Matières */ ['{gold}','GC=F'],['{silver}','SI=F'],['Brent','BZ=F'],['WTI','CL=F'],['{gas}','NG=F'],
+  /* Valeurs */ ['TotalEnergies','TTE.PA'],['LVMH','MC.PA'],['Airbus','AIR.PA'],['EDP','EDP.LS'],['Galp','GALP.LS'],['Jerónimo Martins','JMT.LS'],
+  ['Apple','AAPL'],['Microsoft','MSFT'],['Nvidia','NVDA'],['Tesla','TSLA']
 ];
-// Fournisseurs de cours : Yahoo Finance (2 serveurs) -> Stooq -> CoinGecko (crypto)
-const STOOQ = {'^FCHI':'^cac','^GDAXI':'^dax','^FTSE':'^ukx','^IBEX':'^ibex','^AEX':'^aex','^GSPC':'^spx','^IXIC':'^ndq','^DJI':'^dji','^N225':'^nkx','^HSI':'^hsi','EURUSD=X':'eurusd','EURGBP=X':'eurgbp','JPY=X':'usdjpy','GBPUSD=X':'gbpusd','BTC-USD':'btcusd','ETH-USD':'ethusd','GC=F':'xauusd','SI=F':'xagusd','AAPL':'aapl.us','MSFT':'msft.us','NVDA':'nvda.us','TSLA':'tsla.us','AMZN':'amzn.us','GOOGL':'googl.us','META':'meta.us','TTE.PA':'tte.fr','MC.PA':'mc.fr','AIR.PA':'air.fr','SAN.PA':'san.fr','AI.PA':'ai.fr','BNP.PA':'bnp.fr'};
-const Y1 = s => 'https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(s)+'?interval=1d&range=5d';
-const Y2 = s => 'https://query2.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(s)+'?interval=1d&range=5d';
-const STQ = id => 'https://stooq.com/q/l/?s='+encodeURIComponent(id)+'&f=sd2t2ohlc&h&e=csv';
-const CG = {'BTC-USD':'bitcoin','ETH-USD':'ethereum','SOL-USD':'solana','XRP-USD':'ripple'};
-const CG_URL = 'https://api.coingecko.com/api/v3/simple/price?ids='+Object.values(CG).join(',')+'&vs_currencies=usd&include_24hr_change=true';
-// URLs préchargées côté serveur (GitHub Actions)
-const MARKET_URLS = [CG_URL].concat(MARKETS.map(m=>Y1(m[1])), MARKETS.filter(m=>STOOQ[m[1]]).map(m=>STQ(STOOQ[m[1]])));
+// Source de secours (Stooq) : symbole Yahoo -> symbole Stooq
+const STOOQ = {'^FCHI':'^cac','^GDAXI':'^dax','^FTSE':'^ukx','^IBEX':'^ibex','^AEX':'^aex','^GSPC':'^spx','^IXIC':'^ndq','^DJI':'^dji','^N225':'^nkx','^HSI':'^hsi','EURUSD=X':'eurusd','EURGBP=X':'eurgbp','JPY=X':'usdjpy','BTC-USD':'btcusd','ETH-USD':'ethusd','GC=F':'xauusd','SI=F':'xagusd','AAPL':'aapl.us','MSFT':'msft.us','NVDA':'nvda.us','TSLA':'tsla.us','TTE.PA':'tte.fr','MC.PA':'mc.fr','AIR.PA':'air.fr'};
 const PROXIES = [
   u=>u,
   u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
@@ -364,7 +432,6 @@ const store={
 };
 let custom = store.get('mn_custom',[]);
 let current = store.get('mn_cat','world');
-if(!CAT_IDS.includes(current)) current='world';
 let cache = {};
 let status = store.get('mn_status',{});
 let shared=[];   // sources enregistrées dans sources.json (visibles sur tous vos appareils)
@@ -472,8 +539,10 @@ function render(data, note){
 async function show(cat, force){
   current=cat; store.set('mn_cat',cat);
   const myLang=lang;
-  $('#title').textContent=catTitle(cat);
+  $('#title').textContent=isSc(cat)?T(cat):catTitle(cat);
   [...document.querySelectorAll('#menu button')].forEach(b=>b.classList.toggle('on',b.dataset.id===cat));
+  const sc=isSc(cat);$('#feed').hidden=sc;document.querySelector('.autobar').hidden=sc;$('#scores').hidden=!sc;
+  if(sc) return showScores(cat,myLang);
   const stale=store.get('mn_cache_'+ck(cat),null);
   if(!cache[ck(cat)] && stale) render(stale,`${T('cache')} ${hhmm(stale.at)} · ${T('updating')}`);
   else if(!cache[ck(cat)]) $('#feed').innerHTML='<div class="set">'+'<div class="card sk"></div>'.repeat(6)+'</div>';
@@ -485,17 +554,62 @@ async function show(cat, force){
   $('#upd').textContent=T('lastUpd')+' '+hhmm(Date.now())+' · news.json '+(snapAt?hhmm(snapAt)+' ('+ago(Date.parse(snapAt))+')':'✗');
 }
 
-/* ================= Bandeau boursier ================= */
-const parseYahoo=t=>{const m=JSON.parse(t).chart.result[0].meta;const price=m.regularMarketPrice,prev=m.chartPreviousClose||m.previousClose;if(!(price>0))throw 0;return{price,chg:prev?(price-prev)/prev*100:0}};
-const parseStooq=t=>{const r=t.trim().split(/\r?\n/)[1].split(',');const open=parseFloat(r[3]),close=parseFloat(r[6]);if(!(close>0))throw 0;return{price:close,chg:open>0?(close-open)/open*100:0}}; // variation vs ouverture
-const parseCG=(t,sym)=>{const j=JSON.parse(t)[CG[sym]];if(!j||!(j.usd>0))throw 0;return{price:j.usd,chg:j.usd_24h_change||0}};
-async function quote(sym){
-  const steps=[()=>fetchText(Y1(sym),7000).then(parseYahoo),()=>fetchText(Y2(sym),7000).then(parseYahoo)];
-  if(STOOQ[sym]) steps.push(()=>fetchText(STQ(STOOQ[sym]),7000).then(parseStooq));
-  if(CG[sym]) steps.push(()=>fetchText(CG_URL,7000).then(t=>parseCG(t,sym)));
-  for(const f of steps){try{return await f()}catch(e){}}
-  throw 0;
+/* ================= Scores (ESPN) ================= */
+const SC={sc_pt:'por.1',sc_fr:'fra.1'};
+const isSc=id=>Object.prototype.hasOwnProperty.call(SC,id);
+async function loadScores(cat){
+  const d=n=>new Date(Date.now()+n*864e5).toISOString().slice(0,10).replace(/-/g,'');
+  const url=`https://site.api.espn.com/apis/site/v2/sports/soccer/${SC[cat]}/scoreboard?dates=${d(-3)}-${d(5)}&limit=100`;
+  const j=JSON.parse(await fetchText(url,9000));
+  const tm=c=>({n:c.team.shortDisplayName||c.team.displayName,l:c.team.logo||'',s:c.score,w:c.winner});
+  return (j.events||[]).map(e=>{
+    const c=e.competitions[0],h=c.competitors.find(x=>x.homeAway==='home'),a=c.competitors.find(x=>x.homeAway==='away');
+    const lk=(e.links||[]).find(l=>(l.rel||[]).includes('summary'));
+    return {date:Date.parse(e.date),state:e.status.type.state,clock:e.status.displayClock||e.status.type.shortDetail,h:tm(h),a:tm(a),link:lk?lk.href:''};
+  }).sort((x,y)=>x.date-y.date);
 }
+function renderScores(list){
+  const box=$('#scores');
+  if(!list.length){box.innerHTML=`<div class="empty">${T('scNone')}</div>`;return}
+  const day=t=>new Date(t).toLocaleDateString(LOCALE[lang],{weekday:'long',day:'numeric',month:'long'});
+  const sod=new Date().setHours(0,0,0,0), by={};
+  list.forEach(m=>{(by[day(m.date)]=by[day(m.date)]||{t:m.date,m:[]}).m.push(m)});
+  const days=Object.values(by), up=days.filter(x=>x.t>=sod), past=days.filter(x=>x.t<sod).reverse();
+  const row=(t,pre,post)=>`<div class="tm ${post&&!t.w?'l':''}">${t.l?`<img src="${esc(safeUrl(t.l))}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:''}<span>${esc(t.n)}</span><b>${pre?'–':esc(t.s)}</b></div>`;
+  const card=m=>{
+    const pre=m.state==='pre',post=m.state==='post';
+    const st=pre?hhmm(m.date):post?T('ft'):esc(m.clock);
+    const inner=`<div class="st ${m.state==='in'?'live':''}"><span>${st}</span></div>${row(m.h,pre,post)}${row(m.a,pre,post)}`;
+    return m.link?`<a class="sc" href="${esc(safeUrl(m.link))}" target="_blank" rel="noopener noreferrer">${inner}</a>`:`<div class="sc">${inner}</div>`;
+  };
+  box.innerHTML=up.concat(past).map(d=>`<div class="sc-day">${esc(day(d.t))}</div><div class="sc-grid">${d.m.map(card).join('')}</div>`).join('');
+}
+async function showScores(cat,myLang){
+  $('#refresh').classList.add('spin');
+  try{
+    const l=await loadScores(cat);
+    if(current===cat&&lang===myLang){renderScores(l);$('#status').textContent=`${l.length} · ${T('upd')} ${hhmm(Date.now())}`}
+  }catch(e){if(current===cat){$('#scores').innerHTML=`<div class="empty">${T('scErr')}</div>`;$('#status').textContent=''}}
+  $('#refresh').classList.remove('spin');
+}
+
+/* ================= Bandeau boursier ================= */
+async function quoteYahoo(sym){
+  const url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1d&range=5d';
+  const m=JSON.parse(await fetchText(url,7000)).chart.result[0].meta;
+  const price=m.regularMarketPrice, prev=m.chartPreviousClose||m.previousClose;
+  if(!(price>0)) throw 0;
+  return {price,chg:prev?(price-prev)/prev*100:0};
+}
+async function quoteStooq(sym){
+  const id=STOOQ[sym]; if(!id) throw 0;
+  const csv=await fetchText('https://stooq.com/q/l/?s='+encodeURIComponent(id)+'&f=sd2t2ohlc&h&e=csv',7000);
+  const r=csv.trim().split(/\r?\n/)[1].split(',');
+  const open=parseFloat(r[3]), close=parseFloat(r[6]);
+  if(!(close>0)) throw 0;
+  return {price:close,chg:open>0?(close-open)/open*100:0};  // variation vs ouverture du jour
+}
+const quote = async sym => { try{return await quoteYahoo(sym)}catch(e){return await quoteStooq(sym)} };
 let mkt=store.get('mn_mkt',null);
 async function loadMarkets(){
   const res=await Promise.all(MARKETS.map(async([n,s])=>{try{return [n,await quote(s)]}catch(e){return [n,null]}}));
@@ -544,12 +658,13 @@ function applyI18n(){
 }
 const GROUPS=[
   {k:'news',gk:'gNews',cats:['world','france','portugal']},
-  {k:'eco', gk:'gEco', cats:['eco']},
-  {k:'foot',gk:'gFoot',cats:['fe','ff','fp']}
+  {k:'eco', gk:'gEco', cats:['eco','stocks']},
+  {k:'foot',gk:'gFoot',cats:['fe','ff','fp','porto','ol','lyonnes']},
+  {k:'scores',gk:'gSc',cats:['sc_pt','sc_fr']}
 ];
 function buildMenu(){
   $('#menu').innerHTML=GROUPS.map(g=>`<div class="ng ${g.k}"><div class="ng-h">${esc(T(g.gk))}</div><div class="ng-b">`+
-    g.cats.map(id=>`<button data-id="${id}" class="${id===current?'on':''}">${esc(catLabel(id))}</button>`).join('')+`</div></div>`).join('');
+    g.cats.map(id=>`<button data-id="${id}" class="${id===current?'on':''}">${esc(isSc(id)?T(id):catLabel(id))}</button>`).join('')+`</div></div>`).join('');
   const c=$('#s-cat').value;
   $('#s-cat').innerHTML=CAT_IDS.map(id=>`<option value="${id}">${esc(catFull(id))}</option>`).join('');
   if(c) $('#s-cat').value=c;
@@ -631,6 +746,7 @@ loadShared().then(()=>{drawSources();show(current)});
 loadMarkets();
 setInterval(()=>{loadSnap();loadShared().then(()=>{cache={};show(current,true)})},10*60*1000);
 setInterval(loadMarkets,5*60*1000);
+setInterval(()=>{if(isSc(current))show(current)},60*1000);
 </script>
 </body>
 </html>
